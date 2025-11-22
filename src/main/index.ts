@@ -3,6 +3,7 @@ import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import { listClusters, listServices, listTasks, getTaskContainers } from './services/ecs-service'
+import { getLogConfiguration, getContainerLogs } from './services/logs-service'
 
 function createWindow(): void {
   // Create the browser window.
@@ -89,6 +90,38 @@ app.whenReady().then(() => {
       throw error
     }
   })
+
+  // Logs IPC handlers
+  ipcMain.handle(
+    'logs:getLogConfiguration',
+    async (_event, taskDefinitionArn: string, containerName: string) => {
+      try {
+        return await getLogConfiguration(taskDefinitionArn, containerName)
+      } catch (error) {
+        console.error('IPC logs:getLogConfiguration error:', error)
+        throw error
+      }
+    }
+  )
+
+  ipcMain.handle(
+    'logs:getContainerLogs',
+    async (
+      _event,
+      logGroupName: string,
+      logStreamName: string,
+      region: string,
+      nextToken?: string,
+      startFromHead?: boolean
+    ) => {
+      try {
+        return await getContainerLogs(logGroupName, logStreamName, region, nextToken, startFromHead)
+      } catch (error) {
+        console.error('IPC logs:getContainerLogs error:', error)
+        throw error
+      }
+    }
+  )
 
   createWindow()
 

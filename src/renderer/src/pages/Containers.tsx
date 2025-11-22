@@ -1,7 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, Link, useNavigate, useLocation } from 'react-router-dom'
 
 function Containers(): React.JSX.Element {
+  const navigate = useNavigate()
+  const location = useLocation()
+  const taskDefinitionArn = (location.state as { taskDefinitionArn?: string })?.taskDefinitionArn
   const { clusterName, serviceName, taskArn } = useParams<{
     clusterName: string
     serviceName: string
@@ -77,13 +80,23 @@ function Containers(): React.JSX.Element {
         {containers.map((container) => (
           <div
             key={container.containerArn}
+            onClick={() => {
+              navigate(
+                `/clusters/${encodeURIComponent(clusterName || '')}/services/${encodeURIComponent(serviceName || '')}/tasks/${encodeURIComponent(taskArn || '')}/containers/${encodeURIComponent(container.name)}/logs`,
+                { state: { taskDefinitionArn } }
+              )
+            }}
             style={{
               border: '1px solid #444',
               borderRadius: '8px',
               padding: '20px',
               marginBottom: '20px',
-              backgroundColor: '#1a1a1a'
+              backgroundColor: '#1a1a1a',
+              cursor: 'pointer',
+              transition: 'background-color 0.2s'
             }}
+            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2a2a2a')}
+            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#1a1a1a')}
           >
             <h2 style={{ marginTop: 0 }}>{container.name}</h2>
             <div

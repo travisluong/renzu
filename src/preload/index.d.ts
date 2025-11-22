@@ -62,6 +62,24 @@ export interface Container {
   healthStatus?: string
 }
 
+export interface LogEvent {
+  timestamp: number
+  message: string
+  ingestionTime: number
+}
+
+export interface LogConfigurationResult {
+  logGroupName: string
+  logStreamPrefix: string
+  region: string
+}
+
+export interface LogsResponse {
+  events: LogEvent[]
+  nextForwardToken?: string
+  nextBackwardToken?: string
+}
+
 export interface ECSAPI {
   listClusters: () => Promise<Cluster[]>
   listServices: (clusterArn: string) => Promise<Service[]>
@@ -69,11 +87,26 @@ export interface ECSAPI {
   getTaskContainers: (clusterArn: string, taskArn: string) => Promise<Container[]>
 }
 
+export interface LogsAPI {
+  getLogConfiguration: (
+    taskDefinitionArn: string,
+    containerName: string
+  ) => Promise<LogConfigurationResult>
+  getContainerLogs: (
+    logGroupName: string,
+    logStreamName: string,
+    region: string,
+    nextToken?: string,
+    startFromHead?: boolean
+  ) => Promise<LogsResponse>
+}
+
 declare global {
   interface Window {
     electron: ElectronAPI
     api: {
       ecs: ECSAPI
+      logs: LogsAPI
     }
   }
 }

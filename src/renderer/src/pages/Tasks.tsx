@@ -88,7 +88,8 @@ function Tasks(): React.JSX.Element {
               key={task.taskArn}
               onClick={() =>
                 navigate(
-                  `/clusters/${encodeURIComponent(clusterName || '')}/services/${encodeURIComponent(serviceName || '')}/tasks/${encodeURIComponent(task.taskArn)}/containers`
+                  `/clusters/${encodeURIComponent(clusterName || '')}/services/${encodeURIComponent(serviceName || '')}/tasks/${encodeURIComponent(task.taskArn)}/containers`,
+                  { state: { taskDefinitionArn: task.taskDefinitionArn } }
                 )
               }
               style={{

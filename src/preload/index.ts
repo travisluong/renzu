@@ -10,6 +10,25 @@ const api = {
       ipcRenderer.invoke('ecs:listTasks', clusterArn, serviceName),
     getTaskContainers: (clusterArn: string, taskArn: string) =>
       ipcRenderer.invoke('ecs:getTaskContainers', clusterArn, taskArn)
+  },
+  logs: {
+    getLogConfiguration: (taskDefinitionArn: string, containerName: string) =>
+      ipcRenderer.invoke('logs:getLogConfiguration', taskDefinitionArn, containerName),
+    getContainerLogs: (
+      logGroupName: string,
+      logStreamName: string,
+      region: string,
+      nextToken?: string,
+      startFromHead?: boolean
+    ) =>
+      ipcRenderer.invoke(
+        'logs:getContainerLogs',
+        logGroupName,
+        logStreamName,
+        region,
+        nextToken,
+        startFromHead
+      )
   }
 }
 
