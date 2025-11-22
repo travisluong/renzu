@@ -23,6 +23,7 @@
   "dependencies": {
     "@aws-sdk/client-ecs": "^3.937.0",
     "@aws-sdk/credential-providers": "^3.936.0",
+    "@aws-sdk/shared-ini-file-loader": "^3.370.0",
     "@electron-toolkit/preload": "^3.0.2",
     "@electron-toolkit/utils": "^4.0.0",
     "electron-updater": "^6.3.9",
