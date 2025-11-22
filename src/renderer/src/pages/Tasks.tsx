@@ -1,8 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
-import { useParams, Link } from 'react-router-dom'
-import type { Task } from '../../../preload/index.d'
+import { useParams, Link, useNavigate } from 'react-router-dom'
 
 function Tasks(): React.JSX.Element {
+  const navigate = useNavigate()
   const { clusterName, serviceName } = useParams<{ clusterName: string; serviceName: string }>()
 
   const {
@@ -86,9 +86,18 @@ function Tasks(): React.JSX.Element {
           {tasks.map((task) => (
             <tr
               key={task.taskArn}
+              onClick={() =>
+                navigate(
+                  `/clusters/${encodeURIComponent(clusterName || '')}/services/${encodeURIComponent(serviceName || '')}/tasks/${encodeURIComponent(task.taskArn)}/containers`
+                )
+              }
               style={{
-                borderBottom: '1px solid #333'
+                borderBottom: '1px solid #333',
+                cursor: 'pointer',
+                transition: 'background-color 0.2s'
               }}
+              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2a2a2a')}
+              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
             >
               <td style={{ padding: '12px' }}>{task.taskArn.split('/').pop()}</td>
               <td style={{ padding: '12px' }}>{task.lastStatus}</td>

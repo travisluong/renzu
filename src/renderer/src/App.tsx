@@ -3,6 +3,7 @@ import OriginalApp from './archive/App.original'
 import Clusters from './pages/Clusters'
 import Services from './pages/Services'
 import Tasks from './pages/Tasks'
+import Containers from './pages/Containers'
 
 function Home(): React.JSX.Element {
   return (
@@ -24,6 +25,10 @@ function App(): React.JSX.Element {
       <Route path="/clusters" element={<Clusters />} />
       <Route path="/clusters/:clusterName/services" element={<Services />} />
       <Route path="/clusters/:clusterName/services/:serviceName/tasks" element={<Tasks />} />
+      <Route
+        path="/clusters/:clusterName/services/:serviceName/tasks/:taskArn/containers"
+        element={<Containers />}
+      />
       <Route path="/original" element={<OriginalApp />} />
     </Routes>
   )

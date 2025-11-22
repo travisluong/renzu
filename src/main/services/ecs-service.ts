@@ -47,6 +47,31 @@ export interface Task {
   }>
 }
 
+export interface Container {
+  name: string
+  containerArn: string
+  taskArn: string
+  lastStatus: string
+  exitCode?: number
+  reason?: string
+  image: string
+  imageDigest: string
+  runtimeId: string
+  cpu: string
+  memory: string
+  memoryReservation: string
+  networkBindings: Array<{
+    bindIP: string
+    containerPort: number
+    hostPort: number
+    protocol: string
+  }>
+  networkInterfaces: Array<{
+    privateIpv4Address: string
+  }>
+  healthStatus?: string
+}
+
 export async function listClusters(): Promise<Cluster[]> {
   try {
     // Load AWS config to get default region
@@ -194,6 +219,67 @@ export async function listTasks(clusterArn: string, serviceName: string): Promis
     return tasks
   } catch (error) {
     console.error('Error listing ECS tasks:', error)
+    throw error
+  }
+}
+
+export async function getTaskContainers(clusterArn: string, taskArn: string): Promise<Container[]> {
+  try {
+    // Load AWS config to get default region
+    const { configFile } = await loadSharedConfigFiles()
+    const defaultRegion = configFile?.default?.region || 'us-east-1'
+
+    // Create ECS client
+    const client = new ECSClient({
+      region: defaultRegion,
+      credentials: fromIni()
+    })
+
+    // Get detailed task information
+    const describeCommand = new DescribeTasksCommand({
+      cluster: clusterArn,
+      tasks: [taskArn]
+    })
+    const describeResponse = await client.send(describeCommand)
+
+    if (!describeResponse.tasks || describeResponse.tasks.length === 0) {
+      return []
+    }
+
+    const task = describeResponse.tasks[0]
+
+    // Map to detailed container objects
+    const containers: Container[] =
+      task.containers?.map((container) => ({
+        name: container.name || 'Unknown',
+        containerArn: container.containerArn || '',
+        taskArn: task.taskArn || '',
+        lastStatus: container.lastStatus || 'UNKNOWN',
+        exitCode: container.exitCode,
+        reason: container.reason,
+        image: container.image || '',
+        imageDigest: container.imageDigest || '',
+        runtimeId: container.runtimeId || '',
+        cpu: container.cpu || '0',
+        memory: container.memory || '0',
+        memoryReservation: container.memoryReservation || '0',
+        networkBindings:
+          container.networkBindings?.map((binding) => ({
+            bindIP: binding.bindIP || '',
+            containerPort: binding.containerPort || 0,
+            hostPort: binding.hostPort || 0,
+            protocol: binding.protocol || ''
+          })) || [],
+        networkInterfaces:
+          container.networkInterfaces?.map((iface) => ({
+            privateIpv4Address: iface.privateIpv4Address || ''
+          })) || [],
+        healthStatus: container.healthStatus
+      })) || []
+
+    return containers
+  } catch (error) {
+    console.error('Error getting task containers:', error)
     throw error
   }
 }
