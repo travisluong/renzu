@@ -26,6 +26,7 @@
     "@aws-sdk/shared-ini-file-loader": "^3.370.0",
     "@electron-toolkit/preload": "^3.0.2",
     "@electron-toolkit/utils": "^4.0.0",
+    "@tanstack/react-query": "^5.90.10",
     "electron-updater": "^6.3.9",
     "react-router-dom": "^7.9.6"
   },

@@ -1,36 +1,22 @@
-import { useEffect, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import type { Service } from '../../../preload/index.d'
 
 function Services(): React.JSX.Element {
   const navigate = useNavigate()
   const { clusterName } = useParams<{ clusterName: string }>()
-  const [services, setServices] = useState<Service[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    const fetchServices = async (): Promise<void> => {
-      if (!clusterName) return
+  const {
+    data: services = [],
+    isLoading,
+    error
+  } = useQuery({
+    queryKey: ['services', clusterName],
+    queryFn: () => window.api.ecs.listServices(clusterName!),
+    enabled: !!clusterName
+  })
 
-      try {
-        setLoading(true)
-        setError(null)
-        // clusterName is the ARN passed from Clusters page
-        const data = await window.api.ecs.listServices(clusterName)
-        setServices(data)
-      } catch (err) {
-        console.error('Error fetching services:', err)
-        setError(err instanceof Error ? err.message : 'Failed to fetch services')
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchServices()
-  }, [clusterName])
-
-  if (loading) {
+  if (isLoading) {
     return (
       <div>
         <Link to="/clusters">← Back to Clusters</Link>
@@ -45,7 +31,9 @@ function Services(): React.JSX.Element {
       <div>
         <Link to="/clusters">← Back to Clusters</Link>
         <h1>Services</h1>
-        <p style={{ color: 'red' }}>Error: {error}</p>
+        <p style={{ color: 'red' }}>
+          Error: {error instanceof Error ? error.message : 'Failed to fetch services'}
+        </p>
       </div>
     )
   }

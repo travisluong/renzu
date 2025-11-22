@@ -1,34 +1,21 @@
-import { useEffect, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { useParams, Link } from 'react-router-dom'
 import type { Task } from '../../../preload/index.d'
 
 function Tasks(): React.JSX.Element {
   const { clusterName, serviceName } = useParams<{ clusterName: string; serviceName: string }>()
-  const [tasks, setTasks] = useState<Task[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    const fetchTasks = async (): Promise<void> => {
-      if (!clusterName || !serviceName) return
+  const {
+    data: tasks = [],
+    isLoading,
+    error
+  } = useQuery({
+    queryKey: ['tasks', clusterName, serviceName],
+    queryFn: () => window.api.ecs.listTasks(clusterName!, serviceName!),
+    enabled: !!clusterName && !!serviceName
+  })
 
-      try {
-        setLoading(true)
-        setError(null)
-        const data = await window.api.ecs.listTasks(clusterName, serviceName)
-        setTasks(data)
-      } catch (err) {
-        console.error('Error fetching tasks:', err)
-        setError(err instanceof Error ? err.message : 'Failed to fetch tasks')
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchTasks()
-  }, [clusterName, serviceName])
-
-  if (loading) {
+  if (isLoading) {
     return (
       <div>
         <Link to={`/clusters/${encodeURIComponent(clusterName || '')}/services`}>
@@ -47,7 +34,9 @@ function Tasks(): React.JSX.Element {
           ← Back to Services
         </Link>
         <h1>Tasks</h1>
-        <p style={{ color: 'red' }}>Error: {error}</p>
+        <p style={{ color: 'red' }}>
+          Error: {error instanceof Error ? error.message : 'Failed to fetch tasks'}
+        </p>
       </div>
     )
   }

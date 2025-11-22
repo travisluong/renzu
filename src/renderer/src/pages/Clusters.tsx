@@ -1,32 +1,19 @@
-import { useEffect, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
-import type { Cluster } from '../../../preload/index.d'
 
 function Clusters(): React.JSX.Element {
   const navigate = useNavigate()
-  const [clusters, setClusters] = useState<Cluster[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    const fetchClusters = async (): Promise<void> => {
-      try {
-        setLoading(true)
-        setError(null)
-        const data = await window.api.ecs.listClusters()
-        setClusters(data)
-      } catch (err) {
-        console.error('Error fetching clusters:', err)
-        setError(err instanceof Error ? err.message : 'Failed to fetch clusters')
-      } finally {
-        setLoading(false)
-      }
-    }
+  const {
+    data: clusters = [],
+    isLoading,
+    error
+  } = useQuery({
+    queryKey: ['clusters'],
+    queryFn: () => window.api.ecs.listClusters()
+  })
 
-    fetchClusters()
-  }, [])
-
-  if (loading) {
+  if (isLoading) {
     return (
       <div>
         <h1>ECS Clusters</h1>
@@ -39,7 +26,9 @@ function Clusters(): React.JSX.Element {
     return (
       <div>
         <h1>ECS Clusters</h1>
-        <p style={{ color: 'red' }}>Error: {error}</p>
+        <p style={{ color: 'red' }}>
+          Error: {error instanceof Error ? error.message : 'Failed to fetch clusters'}
+        </p>
         <p>Make sure AWS CLI is configured. Run: aws configure</p>
       </div>
     )
