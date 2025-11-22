@@ -55,40 +55,55 @@ function Services(): React.JSX.Element {
       <p>
         Found {services.length} service{services.length !== 1 ? 's' : ''}
       </p>
-      <div style={{ marginTop: '20px' }}>
-        {services.map((service) => (
-          <div
-            key={service.arn}
-            onClick={() =>
-              navigate(
-                `/clusters/${encodeURIComponent(clusterName || '')}/services/${encodeURIComponent(service.name)}/tasks`
-              )
-            }
-            style={{
-              border: '1px solid #ccc',
-              borderRadius: '8px',
-              padding: '16px',
-              marginBottom: '16px',
-              cursor: 'pointer',
-              transition: 'background-color 0.2s'
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#f5f5f5')}
-            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
-          >
-            <h2>{service.name}</h2>
-            <p>Status: {service.status}</p>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '8px' }}>
-              <div>Desired: {service.desiredCount}</div>
-              <div>Running: {service.runningCount}</div>
-              <div>Pending: {service.pendingCount}</div>
-              <div>Launch Type: {service.launchType}</div>
-            </div>
-            <p style={{ fontSize: '12px', color: '#666', marginTop: '8px' }}>
-              Task Definition: {service.taskDefinition.split('/').pop()}
-            </p>
-          </div>
-        ))}
-      </div>
+      <table
+        style={{
+          marginTop: '20px',
+          width: '100%',
+          borderCollapse: 'collapse',
+          backgroundColor: '#1a1a1a'
+        }}
+      >
+        <thead>
+          <tr style={{ borderBottom: '2px solid #444' }}>
+            <th style={{ padding: '12px', textAlign: 'left' }}>Name</th>
+            <th style={{ padding: '12px', textAlign: 'left' }}>Status</th>
+            <th style={{ padding: '12px', textAlign: 'right' }}>Desired</th>
+            <th style={{ padding: '12px', textAlign: 'right' }}>Running</th>
+            <th style={{ padding: '12px', textAlign: 'right' }}>Pending</th>
+            <th style={{ padding: '12px', textAlign: 'left' }}>Launch Type</th>
+            <th style={{ padding: '12px', textAlign: 'left' }}>Task Definition</th>
+          </tr>
+        </thead>
+        <tbody>
+          {services.map((service) => (
+            <tr
+              key={service.arn}
+              onClick={() =>
+                navigate(
+                  `/clusters/${encodeURIComponent(clusterName || '')}/services/${encodeURIComponent(service.name)}/tasks`
+                )
+              }
+              style={{
+                borderBottom: '1px solid #333',
+                cursor: 'pointer',
+                transition: 'background-color 0.2s'
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2a2a2a')}
+              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
+            >
+              <td style={{ padding: '12px' }}>{service.name}</td>
+              <td style={{ padding: '12px' }}>{service.status}</td>
+              <td style={{ padding: '12px', textAlign: 'right' }}>{service.desiredCount}</td>
+              <td style={{ padding: '12px', textAlign: 'right' }}>{service.runningCount}</td>
+              <td style={{ padding: '12px', textAlign: 'right' }}>{service.pendingCount}</td>
+              <td style={{ padding: '12px' }}>{service.launchType}</td>
+              <td style={{ padding: '12px', fontSize: '12px', color: '#aaa' }}>
+                {service.taskDefinition.split('/').pop()}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   )
 }

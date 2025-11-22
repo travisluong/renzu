@@ -49,33 +49,49 @@ function Clusters(): React.JSX.Element {
       <p>
         Found {clusters.length} cluster{clusters.length !== 1 ? 's' : ''}
       </p>
-      <div style={{ marginTop: '20px' }}>
-        {clusters.map((cluster) => (
-          <div
-            key={cluster.arn}
-            onClick={() => navigate(`/clusters/${encodeURIComponent(cluster.arn)}/services`)}
-            style={{
-              border: '1px solid #ccc',
-              borderRadius: '8px',
-              padding: '16px',
-              marginBottom: '16px',
-              cursor: 'pointer',
-              transition: 'background-color 0.2s'
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#f5f5f5')}
-            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
-          >
-            <h2>{cluster.name}</h2>
-            <p>Status: {cluster.status}</p>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '8px' }}>
-              <div>Container Instances: {cluster.registeredContainerInstancesCount}</div>
-              <div>Running Tasks: {cluster.runningTasksCount}</div>
-              <div>Pending Tasks: {cluster.pendingTasksCount}</div>
-              <div>Active Services: {cluster.activeServicesCount}</div>
-            </div>
-          </div>
-        ))}
-      </div>
+      <table
+        style={{
+          marginTop: '20px',
+          width: '100%',
+          borderCollapse: 'collapse',
+          backgroundColor: '#1a1a1a'
+        }}
+      >
+        <thead>
+          <tr style={{ borderBottom: '2px solid #444' }}>
+            <th style={{ padding: '12px', textAlign: 'left' }}>Name</th>
+            <th style={{ padding: '12px', textAlign: 'left' }}>Status</th>
+            <th style={{ padding: '12px', textAlign: 'right' }}>Container Instances</th>
+            <th style={{ padding: '12px', textAlign: 'right' }}>Running Tasks</th>
+            <th style={{ padding: '12px', textAlign: 'right' }}>Pending Tasks</th>
+            <th style={{ padding: '12px', textAlign: 'right' }}>Active Services</th>
+          </tr>
+        </thead>
+        <tbody>
+          {clusters.map((cluster) => (
+            <tr
+              key={cluster.arn}
+              onClick={() => navigate(`/clusters/${encodeURIComponent(cluster.arn)}/services`)}
+              style={{
+                borderBottom: '1px solid #333',
+                cursor: 'pointer',
+                transition: 'background-color 0.2s'
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2a2a2a')}
+              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
+            >
+              <td style={{ padding: '12px' }}>{cluster.name}</td>
+              <td style={{ padding: '12px' }}>{cluster.status}</td>
+              <td style={{ padding: '12px', textAlign: 'right' }}>
+                {cluster.registeredContainerInstancesCount}
+              </td>
+              <td style={{ padding: '12px', textAlign: 'right' }}>{cluster.runningTasksCount}</td>
+              <td style={{ padding: '12px', textAlign: 'right' }}>{cluster.pendingTasksCount}</td>
+              <td style={{ padding: '12px', textAlign: 'right' }}>{cluster.activeServicesCount}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   )
 }

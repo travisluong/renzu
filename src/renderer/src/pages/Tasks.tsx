@@ -62,53 +62,56 @@ function Tasks(): React.JSX.Element {
       <p>
         Found {tasks.length} task{tasks.length !== 1 ? 's' : ''}
       </p>
-      <div style={{ marginTop: '20px' }}>
-        {tasks.map((task) => (
-          <div
-            key={task.taskArn}
-            style={{
-              border: '1px solid #ccc',
-              borderRadius: '8px',
-              padding: '16px',
-              marginBottom: '16px'
-            }}
-          >
-            <h3 style={{ margin: '0 0 8px 0' }}>{task.taskArn.split('/').pop()}</h3>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '8px' }}>
-              <div>Last Status: {task.lastStatus}</div>
-              <div>Desired Status: {task.desiredStatus}</div>
-              <div>CPU: {task.cpu}</div>
-              <div>Memory: {task.memory}</div>
-              <div>
-                Created: {task.createdAt ? new Date(task.createdAt).toLocaleString() : 'Unknown'}
-              </div>
-              <div>
-                Started: {task.startedAt ? new Date(task.startedAt).toLocaleString() : 'Unknown'}
-              </div>
-            </div>
-            {task.containers.length > 0 && (
-              <div style={{ marginTop: '12px' }}>
-                <strong>Containers:</strong>
-                <div style={{ marginTop: '8px' }}>
-                  {task.containers.map((container, idx) => (
-                    <div
-                      key={idx}
-                      style={{
-                        padding: '8px',
-                        backgroundColor: '#f5f5f5',
-                        borderRadius: '4px',
-                        marginBottom: '4px'
-                      }}
-                    >
-                      {container.name} - {container.lastStatus}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
+      <table
+        style={{
+          marginTop: '20px',
+          width: '100%',
+          borderCollapse: 'collapse',
+          backgroundColor: '#1a1a1a'
+        }}
+      >
+        <thead>
+          <tr style={{ borderBottom: '2px solid #444' }}>
+            <th style={{ padding: '12px', textAlign: 'left' }}>Task ID</th>
+            <th style={{ padding: '12px', textAlign: 'left' }}>Last Status</th>
+            <th style={{ padding: '12px', textAlign: 'left' }}>Desired Status</th>
+            <th style={{ padding: '12px', textAlign: 'right' }}>CPU</th>
+            <th style={{ padding: '12px', textAlign: 'right' }}>Memory</th>
+            <th style={{ padding: '12px', textAlign: 'left' }}>Created</th>
+            <th style={{ padding: '12px', textAlign: 'left' }}>Started</th>
+            <th style={{ padding: '12px', textAlign: 'left' }}>Containers</th>
+          </tr>
+        </thead>
+        <tbody>
+          {tasks.map((task) => (
+            <tr
+              key={task.taskArn}
+              style={{
+                borderBottom: '1px solid #333'
+              }}
+            >
+              <td style={{ padding: '12px' }}>{task.taskArn.split('/').pop()}</td>
+              <td style={{ padding: '12px' }}>{task.lastStatus}</td>
+              <td style={{ padding: '12px' }}>{task.desiredStatus}</td>
+              <td style={{ padding: '12px', textAlign: 'right' }}>{task.cpu}</td>
+              <td style={{ padding: '12px', textAlign: 'right' }}>{task.memory}</td>
+              <td style={{ padding: '12px', fontSize: '12px' }}>
+                {task.createdAt ? new Date(task.createdAt).toLocaleString() : 'Unknown'}
+              </td>
+              <td style={{ padding: '12px', fontSize: '12px' }}>
+                {task.startedAt ? new Date(task.startedAt).toLocaleString() : 'Unknown'}
+              </td>
+              <td style={{ padding: '12px' }}>
+                {task.containers.map((container, idx) => (
+                  <div key={idx} style={{ fontSize: '12px', marginBottom: '4px' }}>
+                    {container.name}: {container.lastStatus}
+                  </div>
+                ))}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   )
 }
