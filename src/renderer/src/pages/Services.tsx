@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, Link, useNavigate } from 'react-router-dom'
 import type { Service } from '../../../preload/index.d'
 
 function Services(): React.JSX.Element {
+  const navigate = useNavigate()
   const { clusterName } = useParams<{ clusterName: string }>()
   const [services, setServices] = useState<Service[]>([])
   const [loading, setLoading] = useState(true)
@@ -70,12 +71,21 @@ function Services(): React.JSX.Element {
         {services.map((service) => (
           <div
             key={service.arn}
+            onClick={() =>
+              navigate(
+                `/clusters/${encodeURIComponent(clusterName || '')}/services/${encodeURIComponent(service.name)}/tasks`
+              )
+            }
             style={{
               border: '1px solid #ccc',
               borderRadius: '8px',
               padding: '16px',
-              marginBottom: '16px'
+              marginBottom: '16px',
+              cursor: 'pointer',
+              transition: 'background-color 0.2s'
             }}
+            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#f5f5f5')}
+            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
           >
             <h2>{service.name}</h2>
             <p>Status: {service.status}</p>

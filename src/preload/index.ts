@@ -5,7 +5,9 @@ import { electronAPI } from '@electron-toolkit/preload'
 const api = {
   ecs: {
     listClusters: () => ipcRenderer.invoke('ecs:listClusters'),
-    listServices: (clusterArn: string) => ipcRenderer.invoke('ecs:listServices', clusterArn)
+    listServices: (clusterArn: string) => ipcRenderer.invoke('ecs:listServices', clusterArn),
+    listTasks: (clusterArn: string, serviceName: string) =>
+      ipcRenderer.invoke('ecs:listTasks', clusterArn, serviceName)
   }
 }
 

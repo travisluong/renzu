@@ -3,7 +3,9 @@ import {
   ListClustersCommand,
   DescribeClustersCommand,
   ListServicesCommand,
-  DescribeServicesCommand
+  DescribeServicesCommand,
+  ListTasksCommand,
+  DescribeTasksCommand
 } from '@aws-sdk/client-ecs'
 import { fromIni } from '@aws-sdk/credential-providers'
 import { loadSharedConfigFiles } from '@aws-sdk/shared-ini-file-loader'
@@ -27,6 +29,22 @@ export interface Service {
   pendingCount: number
   launchType: string
   taskDefinition: string
+}
+
+export interface Task {
+  taskArn: string
+  taskDefinitionArn: string
+  clusterArn: string
+  lastStatus: string
+  desiredStatus: string
+  cpu: string
+  memory: string
+  createdAt: string
+  startedAt: string
+  containers: Array<{
+    name: string
+    lastStatus: string
+  }>
 }
 
 export async function listClusters(): Promise<Cluster[]> {
@@ -120,6 +138,62 @@ export async function listServices(clusterArn: string): Promise<Service[]> {
     return services
   } catch (error) {
     console.error('Error listing ECS services:', error)
+    throw error
+  }
+}
+
+export async function listTasks(clusterArn: string, serviceName: string): Promise<Task[]> {
+  try {
+    // Load AWS config to get default region
+    const { configFile } = await loadSharedConfigFiles()
+    const defaultRegion = configFile?.default?.region || 'us-east-1'
+
+    // Create ECS client
+    const client = new ECSClient({
+      region: defaultRegion,
+      credentials: fromIni()
+    })
+
+    // List task ARNs for the service
+    const listCommand = new ListTasksCommand({
+      cluster: clusterArn,
+      serviceName: serviceName
+    })
+    const listResponse = await client.send(listCommand)
+
+    if (!listResponse.taskArns || listResponse.taskArns.length === 0) {
+      return []
+    }
+
+    // Get detailed task information
+    const describeCommand = new DescribeTasksCommand({
+      cluster: clusterArn,
+      tasks: listResponse.taskArns
+    })
+    const describeResponse = await client.send(describeCommand)
+
+    // Map to simplified task objects
+    const tasks: Task[] =
+      describeResponse.tasks?.map((task) => ({
+        taskArn: task.taskArn || '',
+        taskDefinitionArn: task.taskDefinitionArn || '',
+        clusterArn: task.clusterArn || '',
+        lastStatus: task.lastStatus || 'UNKNOWN',
+        desiredStatus: task.desiredStatus || 'UNKNOWN',
+        cpu: task.cpu || '0',
+        memory: task.memory || '0',
+        createdAt: task.createdAt?.toISOString() || '',
+        startedAt: task.startedAt?.toISOString() || '',
+        containers:
+          task.containers?.map((container) => ({
+            name: container.name || 'Unknown',
+            lastStatus: container.lastStatus || 'UNKNOWN'
+          })) || []
+      })) || []
+
+    return tasks
+  } catch (error) {
+    console.error('Error listing ECS tasks:', error)
     throw error
   }
 }

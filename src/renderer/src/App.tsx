@@ -2,6 +2,7 @@ import { Routes, Route, Link } from 'react-router-dom'
 import OriginalApp from './archive/App.original'
 import Clusters from './pages/Clusters'
 import Services from './pages/Services'
+import Tasks from './pages/Tasks'
 
 function Home(): React.JSX.Element {
   return (
@@ -22,6 +23,7 @@ function App(): React.JSX.Element {
       <Route path="/" element={<Home />} />
       <Route path="/clusters" element={<Clusters />} />
       <Route path="/clusters/:clusterName/services" element={<Services />} />
+      <Route path="/clusters/:clusterName/services/:serviceName/tasks" element={<Tasks />} />
       <Route path="/original" element={<OriginalApp />} />
     </Routes>
   )
