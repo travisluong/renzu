@@ -2,9 +2,9 @@
 
 body {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
-  overflow: hidden;
+  overflow-y: auto;
   background-image: url('./wavy-lines.svg');
   background-size: cover;
   user-select: none;
@@ -28,10 +28,12 @@ code {
 
 #root {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: flex-start;
+  justify-content: flex-start;
   flex-direction: column;
-  margin-bottom: 80px;
+  padding: 20px;
+  width: 100%;
+  max-width: 1200px;
 }
 
 .logo {
