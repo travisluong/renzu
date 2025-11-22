@@ -2,7 +2,7 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
-import { listClusters } from './services/ecs-service'
+import { listClusters, listServices } from './services/ecs-service'
 
 function createWindow(): void {
   // Create the browser window.
@@ -59,6 +59,15 @@ app.whenReady().then(() => {
       return await listClusters()
     } catch (error) {
       console.error('IPC ecs:listClusters error:', error)
+      throw error
+    }
+  })
+
+  ipcMain.handle('ecs:listServices', async (_event, clusterArn: string) => {
+    try {
+      return await listServices(clusterArn)
+    } catch (error) {
+      console.error('IPC ecs:listServices error:', error)
       throw error
     }
   })

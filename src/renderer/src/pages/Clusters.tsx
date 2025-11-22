@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import type { Cluster } from '../../../preload/index.d'
 
 function Clusters(): React.JSX.Element {
+  const navigate = useNavigate()
   const [clusters, setClusters] = useState<Cluster[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -62,12 +64,17 @@ function Clusters(): React.JSX.Element {
         {clusters.map((cluster) => (
           <div
             key={cluster.arn}
+            onClick={() => navigate(`/clusters/${encodeURIComponent(cluster.arn)}/services`)}
             style={{
               border: '1px solid #ccc',
               borderRadius: '8px',
               padding: '16px',
-              marginBottom: '16px'
+              marginBottom: '16px',
+              cursor: 'pointer',
+              transition: 'background-color 0.2s'
             }}
+            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#f5f5f5')}
+            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
           >
             <h2>{cluster.name}</h2>
             <p>Status: {cluster.status}</p>

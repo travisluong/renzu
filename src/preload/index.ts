@@ -4,7 +4,8 @@ import { electronAPI } from '@electron-toolkit/preload'
 // Custom APIs for renderer
 const api = {
   ecs: {
-    listClusters: () => ipcRenderer.invoke('ecs:listClusters')
+    listClusters: () => ipcRenderer.invoke('ecs:listClusters'),
+    listServices: (clusterArn: string) => ipcRenderer.invoke('ecs:listServices', clusterArn)
   }
 }
 
