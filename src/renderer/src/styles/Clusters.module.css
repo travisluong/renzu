@@ -1,0 +1,113 @@
+.header {
+  margin-bottom: 8px;
+}
+
+.description {
+  color: #999;
+  margin-bottom: 24px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background-color: #1a1a1a;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #444;
+}
+
+.tableHead {
+  background-color: #252525;
+}
+
+.tableHeader {
+  padding: 16px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 13px;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.tableHeaderRight {
+  padding: 16px;
+  text-align: right;
+  font-weight: 600;
+  font-size: 13px;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.tableRow {
+  border-top: 1px solid #333;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.tableRow:hover {
+  background-color: #2a2a2a;
+}
+
+.tableCell {
+  padding: 16px;
+  font-size: 15px;
+}
+
+.tableCellName {
+  padding: 16px;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.tableCellRight {
+  padding: 16px;
+  font-size: 15px;
+  text-align: right;
+}
+
+.tableCellRightBold {
+  padding: 16px;
+  font-size: 15px;
+  text-align: right;
+  font-weight: 600;
+}
+
+.statusBadge {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.statusActive {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  background-color: #1a4d1a;
+  color: #4ade80;
+}
+
+.statusInactive {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  background-color: #4d1a1a;
+  color: #f87171;
+}
+
+.runningTasks {
+  color: #4ade80;
+}
+
+.pendingTasks {
+  color: #fbbf24;
+}
+
+.activeServices {
+  color: #667eea;
+}

@@ -1,0 +1,199 @@
+.logsContainer {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 40px);
+  width: 100%;
+  padding: 20px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.title {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.buttonStart {
+  background-color: #007acc;
+  color: white;
+}
+
+.buttonStart:hover {
+  background-color: #005a9e;
+}
+
+.buttonStop {
+  background-color: #d9534f;
+  color: white;
+}
+
+.buttonStop:hover {
+  background-color: #c9302c;
+}
+
+.buttonJump {
+  padding: 4px 12px;
+  background-color: #333;
+  color: white;
+  border: 1px solid #555;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.buttonJump:hover {
+  background-color: #444;
+  border-color: #666;
+}
+
+.logCount {
+  font-size: 12px;
+  color: #888;
+}
+
+.configInfo {
+  font-size: 12px;
+  color: #888;
+  margin-bottom: 12px;
+  padding: 12px;
+  background-color: #1f1f1f;
+  border-radius: 4px;
+  border: 1px solid #333;
+}
+
+.configInfo div {
+  margin-bottom: 4px;
+}
+
+.configInfo div:last-child {
+  margin-bottom: 0;
+}
+
+.configLabel {
+  font-weight: 600;
+  color: #aaa;
+  margin-right: 6px;
+}
+
+.controls {
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.checkboxLabel {
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.checkboxLabel input {
+  margin-right: 6px;
+}
+
+.errorBox {
+  padding: 12px;
+  background-color: #3a2020;
+  border: 1px solid #d9534f;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+.errorTitle {
+  color: #d9534f;
+  font-weight: 600;
+}
+
+.errorMessage {
+  font-size: 12px;
+  margin-top: 4px;
+  color: #e0e0e0;
+}
+
+.errorHint {
+  font-size: 12px;
+  margin-top: 8px;
+  color: #888;
+}
+
+.logsViewer {
+  flex: 1;
+  border: 1px solid #333;
+  border-radius: 8px;
+  background-color: #0a0a0a;
+  overflow: hidden;
+  width: 100%;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.emptyState {
+  padding: 20px;
+  text-align: center;
+  color: #888;
+}
+
+.logsContent {
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.logEntry {
+  font-size: 12px;
+  font-family: monospace;
+  padding: 4px 12px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  border-bottom: 1px solid #1a1a1a;
+  display: flex;
+  align-items: flex-start;
+  min-height: 22px;
+  user-select: text;
+  cursor: text;
+  transition: background-color 0.1s ease;
+}
+
+.logEntry:hover {
+  background-color: #0f0f0f;
+}
+
+.logTimestamp {
+  color: #888;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+.logMessage {
+  flex: 1;
+  color: #e0e0e0;
+}
+
+.loading,
+.error,
+.empty {
+  padding: 20px;
+  text-align: center;
+  color: #888;
+}
+
+.error {
+  color: #d9534f;
+}

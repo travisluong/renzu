@@ -1,6 +1,22 @@
 import { useQuery } from '@tanstack/react-query'
 import { useParams, useNavigate } from 'react-router-dom'
 import Breadcrumbs from '../components/Breadcrumbs'
+import styles from '../styles/Tasks.module.css'
+
+interface Task {
+  taskArn: string
+  taskDefinitionArn: string
+  lastStatus: string
+  desiredStatus: string
+  cpu: string
+  memory: string
+  createdAt: string
+  startedAt: string
+  containers: Array<{
+    name: string
+    lastStatus: string
+  }>
+}
 
 function Tasks(): React.JSX.Element {
   const navigate = useNavigate()
@@ -22,7 +38,7 @@ function Tasks(): React.JSX.Element {
     data: tasks = [],
     isLoading,
     error
-  } = useQuery({
+  } = useQuery<Task[]>({
     queryKey: ['tasks', clusterName, serviceName],
     queryFn: () => window.api.ecs.listTasks(clusterName!, serviceName!),
     enabled: !!clusterName && !!serviceName
@@ -30,20 +46,20 @@ function Tasks(): React.JSX.Element {
 
   if (isLoading) {
     return (
-      <div>
+      <div className={styles.container}>
         <Breadcrumbs items={breadcrumbItems} />
-        <h1>Tasks</h1>
-        <p>Loading tasks...</p>
+        <h1 className={styles.header}>Tasks</h1>
+        <p className={styles.loading}>Loading tasks...</p>
       </div>
     )
   }
 
   if (error) {
     return (
-      <div>
+      <div className={styles.container}>
         <Breadcrumbs items={breadcrumbItems} />
-        <h1>Tasks</h1>
-        <p style={{ color: 'red' }}>
+        <h1 className={styles.header}>Tasks</h1>
+        <p className={styles.error}>
           Error: {error instanceof Error ? error.message : 'Failed to fetch tasks'}
         </p>
       </div>
@@ -52,73 +68,70 @@ function Tasks(): React.JSX.Element {
 
   if (tasks.length === 0) {
     return (
-      <div>
+      <div className={styles.container}>
         <Breadcrumbs items={breadcrumbItems} />
-        <h1>Tasks - {serviceName}</h1>
-        <p>No tasks found for this service.</p>
+        <h1 className={styles.header}>Tasks - {serviceName}</h1>
+        <p className={styles.empty}>No tasks found for this service.</p>
       </div>
     )
   }
 
+  const getStatusClass = (status: string): string => {
+    if (status === 'RUNNING') return styles.statusRunning
+    if (status === 'PENDING' || status === 'PROVISIONING') return styles.statusPending
+    return styles.statusStopped
+  }
+
   return (
-    <div>
+    <div className={styles.container}>
       <Breadcrumbs items={breadcrumbItems} />
-      <h1>Tasks - {serviceName}</h1>
-      <p>
+      <h1 className={styles.header}>Tasks - {serviceName}</h1>
+      <p className={styles.description}>
         Found {tasks.length} task{tasks.length !== 1 ? 's' : ''}
       </p>
-      <table
-        style={{
-          marginTop: '20px',
-          width: '100%',
-          borderCollapse: 'collapse',
-          backgroundColor: '#1a1a1a'
-        }}
-      >
-        <thead>
-          <tr style={{ borderBottom: '2px solid #444' }}>
-            <th style={{ padding: '12px', textAlign: 'left' }}>Task ID</th>
-            <th style={{ padding: '12px', textAlign: 'left' }}>Last Status</th>
-            <th style={{ padding: '12px', textAlign: 'left' }}>Desired Status</th>
-            <th style={{ padding: '12px', textAlign: 'right' }}>CPU</th>
-            <th style={{ padding: '12px', textAlign: 'right' }}>Memory</th>
-            <th style={{ padding: '12px', textAlign: 'left' }}>Created</th>
-            <th style={{ padding: '12px', textAlign: 'left' }}>Started</th>
-            <th style={{ padding: '12px', textAlign: 'left' }}>Containers</th>
+      <table className={styles.table}>
+        <thead className={styles.tableHead}>
+          <tr>
+            <th>Task ID</th>
+            <th>Last Status</th>
+            <th>Desired Status</th>
+            <th>CPU</th>
+            <th>Memory</th>
+            <th>Created</th>
+            <th>Started</th>
+            <th>Containers</th>
           </tr>
         </thead>
         <tbody>
           {tasks.map((task) => (
             <tr
               key={task.taskArn}
+              className={styles.tableRow}
               onClick={() =>
                 navigate(
                   `/clusters/${encodeURIComponent(clusterName || '')}/services/${encodeURIComponent(serviceName || '')}/tasks/${encodeURIComponent(task.taskArn)}/containers`,
                   { state: { taskDefinitionArn: task.taskDefinitionArn } }
                 )
               }
-              style={{
-                borderBottom: '1px solid #333',
-                cursor: 'pointer',
-                transition: 'background-color 0.2s'
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2a2a2a')}
-              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
             >
-              <td style={{ padding: '12px' }}>{task.taskArn.split('/').pop()}</td>
-              <td style={{ padding: '12px' }}>{task.lastStatus}</td>
-              <td style={{ padding: '12px' }}>{task.desiredStatus}</td>
-              <td style={{ padding: '12px', textAlign: 'right' }}>{task.cpu}</td>
-              <td style={{ padding: '12px', textAlign: 'right' }}>{task.memory}</td>
-              <td style={{ padding: '12px', fontSize: '12px' }}>
+              <td className={styles.taskId}>{task.taskArn.split('/').pop()}</td>
+              <td>
+                <span className={getStatusClass(task.lastStatus)}>{task.lastStatus}</span>
+              </td>
+              <td>
+                <span className={getStatusClass(task.desiredStatus)}>{task.desiredStatus}</span>
+              </td>
+              <td className={styles.cpuCell}>{task.cpu}</td>
+              <td className={styles.memoryCell}>{task.memory}</td>
+              <td className={styles.dateCell}>
                 {task.createdAt ? new Date(task.createdAt).toLocaleString() : 'Unknown'}
               </td>
-              <td style={{ padding: '12px', fontSize: '12px' }}>
+              <td className={styles.dateCell}>
                 {task.startedAt ? new Date(task.startedAt).toLocaleString() : 'Unknown'}
               </td>
-              <td style={{ padding: '12px' }}>
+              <td className={styles.containersCell}>
                 {task.containers.map((container, idx) => (
-                  <div key={idx} style={{ fontSize: '12px', marginBottom: '4px' }}>
+                  <div key={idx} className={styles.containerItem}>
                     {container.name}: {container.lastStatus}
                   </div>
                 ))}

@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { useParams, useNavigate } from 'react-router-dom'
-import type { Service } from '../../../preload/index.d'
 import Breadcrumbs from '../components/Breadcrumbs'
+import styles from '../styles/Services.module.css'
 
 function Services(): React.JSX.Element {
   const navigate = useNavigate()
@@ -60,27 +60,20 @@ function Services(): React.JSX.Element {
   return (
     <div>
       <Breadcrumbs items={breadcrumbItems} />
-      <h1>Services</h1>
-      <p>
+      <h1 className={styles.header}>Services</h1>
+      <p className={styles.description}>
         Found {services.length} service{services.length !== 1 ? 's' : ''}
       </p>
-      <table
-        style={{
-          marginTop: '20px',
-          width: '100%',
-          borderCollapse: 'collapse',
-          backgroundColor: '#1a1a1a'
-        }}
-      >
-        <thead>
-          <tr style={{ borderBottom: '2px solid #444' }}>
-            <th style={{ padding: '12px', textAlign: 'left' }}>Name</th>
-            <th style={{ padding: '12px', textAlign: 'left' }}>Status</th>
-            <th style={{ padding: '12px', textAlign: 'right' }}>Desired</th>
-            <th style={{ padding: '12px', textAlign: 'right' }}>Running</th>
-            <th style={{ padding: '12px', textAlign: 'right' }}>Pending</th>
-            <th style={{ padding: '12px', textAlign: 'left' }}>Launch Type</th>
-            <th style={{ padding: '12px', textAlign: 'left' }}>Task Definition</th>
+      <table className={styles.table}>
+        <thead className={styles.tableHead}>
+          <tr>
+            <th className={styles.tableHeader}>Name</th>
+            <th className={styles.tableHeader}>Status</th>
+            <th className={styles.tableHeaderRight}>Desired</th>
+            <th className={styles.tableHeaderRight}>Running</th>
+            <th className={styles.tableHeaderRight}>Pending</th>
+            <th className={styles.tableHeader}>Launch Type</th>
+            <th className={styles.tableHeader}>Task Definition</th>
           </tr>
         </thead>
         <tbody>
@@ -92,23 +85,29 @@ function Services(): React.JSX.Element {
                   `/clusters/${encodeURIComponent(clusterName || '')}/services/${encodeURIComponent(service.name)}/tasks`
                 )
               }
-              style={{
-                borderBottom: '1px solid #333',
-                cursor: 'pointer',
-                transition: 'background-color 0.2s'
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2a2a2a')}
-              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
+              className={styles.tableRow}
             >
-              <td style={{ padding: '12px' }}>{service.name}</td>
-              <td style={{ padding: '12px' }}>{service.status}</td>
-              <td style={{ padding: '12px', textAlign: 'right' }}>{service.desiredCount}</td>
-              <td style={{ padding: '12px', textAlign: 'right' }}>{service.runningCount}</td>
-              <td style={{ padding: '12px', textAlign: 'right' }}>{service.pendingCount}</td>
-              <td style={{ padding: '12px' }}>{service.launchType}</td>
-              <td style={{ padding: '12px', fontSize: '12px', color: '#aaa' }}>
-                {service.taskDefinition.split('/').pop()}
+              <td className={styles.tableCellName}>{service.name}</td>
+              <td className={styles.tableCell}>
+                <span
+                  className={
+                    service.status === 'ACTIVE' ? styles.statusActive : styles.statusInactive
+                  }
+                >
+                  {service.status}
+                </span>
               </td>
+              <td className={`${styles.tableCellRightBold} ${styles.desiredCount}`}>
+                {service.desiredCount}
+              </td>
+              <td className={`${styles.tableCellRightBold} ${styles.runningCount}`}>
+                {service.runningCount}
+              </td>
+              <td className={`${styles.tableCellRightBold} ${styles.pendingCount}`}>
+                {service.pendingCount}
+              </td>
+              <td className={styles.tableCell}>{service.launchType}</td>
+              <td className={styles.taskDefinition}>{service.taskDefinition.split('/').pop()}</td>
             </tr>
           ))}
         </tbody>

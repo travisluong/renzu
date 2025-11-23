@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import Breadcrumbs from '../components/Breadcrumbs'
+import styles from '../styles/Clusters.module.css'
 
 function Clusters(): React.JSX.Element {
   const navigate = useNavigate()
@@ -50,26 +51,19 @@ function Clusters(): React.JSX.Element {
   return (
     <div>
       <Breadcrumbs items={[{ label: 'Clusters', path: '/clusters' }]} />
-      <h1>ECS Clusters</h1>
-      <p>
+      <h1 className={styles.header}>ECS Clusters</h1>
+      <p className={styles.description}>
         Found {clusters.length} cluster{clusters.length !== 1 ? 's' : ''}
       </p>
-      <table
-        style={{
-          marginTop: '20px',
-          width: '100%',
-          borderCollapse: 'collapse',
-          backgroundColor: '#1a1a1a'
-        }}
-      >
-        <thead>
-          <tr style={{ borderBottom: '2px solid #444' }}>
-            <th style={{ padding: '12px', textAlign: 'left' }}>Name</th>
-            <th style={{ padding: '12px', textAlign: 'left' }}>Status</th>
-            <th style={{ padding: '12px', textAlign: 'right' }}>Container Instances</th>
-            <th style={{ padding: '12px', textAlign: 'right' }}>Running Tasks</th>
-            <th style={{ padding: '12px', textAlign: 'right' }}>Pending Tasks</th>
-            <th style={{ padding: '12px', textAlign: 'right' }}>Active Services</th>
+      <table className={styles.table}>
+        <thead className={styles.tableHead}>
+          <tr>
+            <th className={styles.tableHeader}>Name</th>
+            <th className={styles.tableHeader}>Status</th>
+            <th className={styles.tableHeaderRight}>Container Instances</th>
+            <th className={styles.tableHeaderRight}>Running Tasks</th>
+            <th className={styles.tableHeaderRight}>Pending Tasks</th>
+            <th className={styles.tableHeaderRight}>Active Services</th>
           </tr>
         </thead>
         <tbody>
@@ -77,22 +71,28 @@ function Clusters(): React.JSX.Element {
             <tr
               key={cluster.arn}
               onClick={() => navigate(`/clusters/${encodeURIComponent(cluster.arn)}/services`)}
-              style={{
-                borderBottom: '1px solid #333',
-                cursor: 'pointer',
-                transition: 'background-color 0.2s'
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2a2a2a')}
-              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
+              className={styles.tableRow}
             >
-              <td style={{ padding: '12px' }}>{cluster.name}</td>
-              <td style={{ padding: '12px' }}>{cluster.status}</td>
-              <td style={{ padding: '12px', textAlign: 'right' }}>
-                {cluster.registeredContainerInstancesCount}
+              <td className={styles.tableCellName}>{cluster.name}</td>
+              <td className={styles.tableCell}>
+                <span
+                  className={
+                    cluster.status === 'ACTIVE' ? styles.statusActive : styles.statusInactive
+                  }
+                >
+                  {cluster.status}
+                </span>
               </td>
-              <td style={{ padding: '12px', textAlign: 'right' }}>{cluster.runningTasksCount}</td>
-              <td style={{ padding: '12px', textAlign: 'right' }}>{cluster.pendingTasksCount}</td>
-              <td style={{ padding: '12px', textAlign: 'right' }}>{cluster.activeServicesCount}</td>
+              <td className={styles.tableCellRight}>{cluster.registeredContainerInstancesCount}</td>
+              <td className={`${styles.tableCellRightBold} ${styles.runningTasks}`}>
+                {cluster.runningTasksCount}
+              </td>
+              <td className={`${styles.tableCellRightBold} ${styles.pendingTasks}`}>
+                {cluster.pendingTasksCount}
+              </td>
+              <td className={`${styles.tableCellRightBold} ${styles.activeServices}`}>
+                {cluster.activeServicesCount}
+              </td>
             </tr>
           ))}
         </tbody>

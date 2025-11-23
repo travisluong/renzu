@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useParams } from 'react-router-dom'
 import { useRef, useEffect, useState } from 'react'
 import Breadcrumbs from '../components/Breadcrumbs'
+import styles from '../styles/Logs.module.css'
 
 interface LogEntry {
   timestamp: number
@@ -121,20 +122,20 @@ function Logs(): React.JSX.Element {
 
   if (isLoadingConfig) {
     return (
-      <div>
+      <div className={styles.logsContainer}>
         <Breadcrumbs items={breadcrumbItems} />
-        <h1>Logs - {containerName}</h1>
-        <p>Loading log configuration...</p>
+        <h1 className={styles.title}>Logs - {containerName}</h1>
+        <p className={styles.loading}>Loading log configuration...</p>
       </div>
     )
   }
 
   if (configError) {
     return (
-      <div>
+      <div className={styles.logsContainer}>
         <Breadcrumbs items={breadcrumbItems} />
-        <h1>Logs - {containerName}</h1>
-        <p style={{ color: 'red' }}>
+        <h1 className={styles.title}>Logs - {containerName}</h1>
+        <p className={styles.error}>
           Error loading log configuration:{' '}
           {configError instanceof Error ? configError.message : 'Unknown error'}
         </p>
@@ -148,81 +149,58 @@ function Logs(): React.JSX.Element {
 
   if (!logConfig) {
     return (
-      <div>
+      <div className={styles.logsContainer}>
         <Breadcrumbs items={breadcrumbItems} />
-        <h1>Logs - {containerName}</h1>
-        <p>No log configuration available</p>
+        <h1 className={styles.title}>Logs - {containerName}</h1>
+        <p className={styles.empty}>No log configuration available</p>
       </div>
     )
   }
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        height: 'calc(100vh - 40px)',
-        width: '100%'
-      }}
-    >
+    <div className={styles.logsContainer}>
       <Breadcrumbs items={breadcrumbItems} />
 
-      <div style={{ marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-        <h1 style={{ margin: 0 }}>Logs - {containerName}</h1>
+      <div className={styles.header}>
+        <h1 className={styles.title}>Logs - {containerName}</h1>
         {!isTailing ? (
-          <button
-            onClick={startTailing}
-            style={{
-              padding: '8px 16px',
-              backgroundColor: '#007acc',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              fontSize: '14px'
-            }}
-          >
+          <button onClick={startTailing} className={`${styles.button} ${styles.buttonStart}`}>
             Start Tailing
           </button>
         ) : (
           <>
-            <button
-              onClick={stopTailing}
-              style={{
-                padding: '8px 16px',
-                backgroundColor: '#d9534f',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                fontSize: '14px'
-              }}
-            >
+            <button onClick={stopTailing} className={`${styles.button} ${styles.buttonStop}`}>
               Stop Tailing
             </button>
-            <span style={{ fontSize: '12px', color: '#888' }}>
+            <span className={styles.logCount}>
               {isLoadingLogs ? 'Loading...' : `${allLogs.length} logs`}
             </span>
           </>
         )}
       </div>
 
-      <div style={{ fontSize: '12px', color: '#888', marginBottom: '12px' }}>
-        <div>Log Group: {logConfig.logGroupName}</div>
-        <div>Log Stream: {logStreamNameRef.current}</div>
-        <div>Region: {logConfig.region}</div>
+      <div className={styles.configInfo}>
+        <div>
+          <span className={styles.configLabel}>Log Group:</span>
+          {logConfig.logGroupName}
+        </div>
+        <div>
+          <span className={styles.configLabel}>Log Stream:</span>
+          {logStreamNameRef.current}
+        </div>
+        <div>
+          <span className={styles.configLabel}>Region:</span>
+          {logConfig.region}
+        </div>
       </div>
 
       {isTailing && (
-        <div style={{ marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <label
-            style={{ fontSize: '14px', display: 'flex', alignItems: 'center', cursor: 'pointer' }}
-          >
+        <div className={styles.controls}>
+          <label className={styles.checkboxLabel}>
             <input
               type="checkbox"
               checked={autoScroll}
               onChange={(e) => setAutoScroll(e.target.checked)}
-              style={{ marginRight: '6px' }}
             />
             Auto-scroll
           </label>
@@ -234,15 +212,7 @@ function Logs(): React.JSX.Element {
                   logsContainerRef.current.scrollTop = logsContainerRef.current.scrollHeight
                 }
               }}
-              style={{
-                padding: '4px 12px',
-                backgroundColor: '#333',
-                color: 'white',
-                border: '1px solid #555',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                fontSize: '12px'
-              }}
+              className={styles.buttonJump}
             >
               Jump to Bottom
             </button>
@@ -251,22 +221,14 @@ function Logs(): React.JSX.Element {
       )}
 
       {logsError && (
-        <div
-          style={{
-            padding: '12px',
-            backgroundColor: '#3a2020',
-            border: '1px solid #d9534f',
-            borderRadius: '4px',
-            marginBottom: '12px'
-          }}
-        >
-          <strong style={{ color: '#d9534f' }}>Error loading logs:</strong>
-          <div style={{ fontSize: '12px', marginTop: '4px' }}>
+        <div className={styles.errorBox}>
+          <div className={styles.errorTitle}>Error loading logs:</div>
+          <div className={styles.errorMessage}>
             {logsError instanceof Error ? logsError.message : 'Unknown error'}
           </div>
           {logsError instanceof Error &&
             logsError.message.includes('ResourceNotFoundException') && (
-              <div style={{ fontSize: '12px', marginTop: '8px', color: '#888' }}>
+              <div className={styles.errorHint}>
                 The log stream may not exist yet. The container might still be starting up, or logs
                 haven&apos;t been created.
               </div>
@@ -274,50 +236,17 @@ function Logs(): React.JSX.Element {
         </div>
       )}
 
-      <div
-        style={{
-          flex: 1,
-          border: '1px solid #444',
-          borderRadius: '4px',
-          backgroundColor: '#0a0a0a',
-          overflow: 'hidden',
-          width: '100%'
-        }}
-      >
+      <div className={styles.logsViewer}>
         {allLogs.length === 0 && !isLoadingLogs ? (
-          <div style={{ padding: '20px', textAlign: 'center', color: '#888' }}>
+          <div className={styles.emptyState}>
             {isTailing ? 'Waiting for logs...' : 'Click "Start Tailing" to view logs'}
           </div>
         ) : (
-          <div
-            ref={logsContainerRef}
-            style={{
-              height: '100%',
-              overflowY: 'auto',
-              overflowX: 'hidden'
-            }}
-          >
+          <div ref={logsContainerRef} className={styles.logsContent}>
             {allLogs.map((log, index) => (
-              <div
-                key={`${log.timestamp}-${index}`}
-                style={{
-                  fontSize: '12px',
-                  fontFamily: 'monospace',
-                  padding: '4px 12px',
-                  whiteSpace: 'pre-wrap',
-                  wordBreak: 'break-word',
-                  borderBottom: '1px solid #1a1a1a',
-                  display: 'flex',
-                  alignItems: 'flex-start',
-                  minHeight: '22px',
-                  userSelect: 'text',
-                  cursor: 'text'
-                }}
-              >
-                <span style={{ color: '#888', marginRight: '8px', flexShrink: 0 }}>
-                  {formatTimestamp(log.timestamp)}
-                </span>
-                <span style={{ flex: 1 }}>{log.message}</span>
+              <div key={`${log.timestamp}-${index}`} className={styles.logEntry}>
+                <span className={styles.logTimestamp}>{formatTimestamp(log.timestamp)}</span>
+                <span className={styles.logMessage}>{log.message}</span>
               </div>
             ))}
           </div>
