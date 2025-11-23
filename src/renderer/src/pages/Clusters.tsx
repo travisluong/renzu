@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
+import Breadcrumbs from '../components/Breadcrumbs'
 
 function Clusters(): React.JSX.Element {
   const navigate = useNavigate()
@@ -16,6 +17,7 @@ function Clusters(): React.JSX.Element {
   if (isLoading) {
     return (
       <div>
+        <Breadcrumbs items={[{ label: 'Clusters', path: '/clusters' }]} />
         <h1>ECS Clusters</h1>
         <p>Loading clusters...</p>
       </div>
@@ -25,6 +27,7 @@ function Clusters(): React.JSX.Element {
   if (error) {
     return (
       <div>
+        <Breadcrumbs items={[{ label: 'Clusters', path: '/clusters' }]} />
         <h1>ECS Clusters</h1>
         <p style={{ color: 'red' }}>
           Error: {error instanceof Error ? error.message : 'Failed to fetch clusters'}
@@ -37,6 +40,7 @@ function Clusters(): React.JSX.Element {
   if (clusters.length === 0) {
     return (
       <div>
+        <Breadcrumbs items={[{ label: 'Clusters', path: '/clusters' }]} />
         <h1>ECS Clusters</h1>
         <p>No clusters found in your AWS account.</p>
       </div>
@@ -45,6 +49,7 @@ function Clusters(): React.JSX.Element {
 
   return (
     <div>
+      <Breadcrumbs items={[{ label: 'Clusters', path: '/clusters' }]} />
       <h1>ECS Clusters</h1>
       <p>
         Found {clusters.length} cluster{clusters.length !== 1 ? 's' : ''}

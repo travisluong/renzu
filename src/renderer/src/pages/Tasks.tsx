@@ -1,9 +1,22 @@
 import { useQuery } from '@tanstack/react-query'
-import { useParams, Link, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
+import Breadcrumbs from '../components/Breadcrumbs'
 
 function Tasks(): React.JSX.Element {
   const navigate = useNavigate()
   const { clusterName, serviceName } = useParams<{ clusterName: string; serviceName: string }>()
+
+  const breadcrumbItems = [
+    { label: 'Clusters', path: '/clusters' },
+    {
+      label: clusterName || '',
+      path: `/clusters/${encodeURIComponent(clusterName || '')}/services`
+    },
+    {
+      label: serviceName || '',
+      path: `/clusters/${encodeURIComponent(clusterName || '')}/services/${encodeURIComponent(serviceName || '')}/tasks`
+    }
+  ]
 
   const {
     data: tasks = [],
@@ -18,9 +31,7 @@ function Tasks(): React.JSX.Element {
   if (isLoading) {
     return (
       <div>
-        <Link to={`/clusters/${encodeURIComponent(clusterName || '')}/services`}>
-          ← Back to Services
-        </Link>
+        <Breadcrumbs items={breadcrumbItems} />
         <h1>Tasks</h1>
         <p>Loading tasks...</p>
       </div>
@@ -30,9 +41,7 @@ function Tasks(): React.JSX.Element {
   if (error) {
     return (
       <div>
-        <Link to={`/clusters/${encodeURIComponent(clusterName || '')}/services`}>
-          ← Back to Services
-        </Link>
+        <Breadcrumbs items={breadcrumbItems} />
         <h1>Tasks</h1>
         <p style={{ color: 'red' }}>
           Error: {error instanceof Error ? error.message : 'Failed to fetch tasks'}
@@ -44,9 +53,7 @@ function Tasks(): React.JSX.Element {
   if (tasks.length === 0) {
     return (
       <div>
-        <Link to={`/clusters/${encodeURIComponent(clusterName || '')}/services`}>
-          ← Back to Services
-        </Link>
+        <Breadcrumbs items={breadcrumbItems} />
         <h1>Tasks - {serviceName}</h1>
         <p>No tasks found for this service.</p>
       </div>
@@ -55,9 +62,7 @@ function Tasks(): React.JSX.Element {
 
   return (
     <div>
-      <Link to={`/clusters/${encodeURIComponent(clusterName || '')}/services`}>
-        ← Back to Services
-      </Link>
+      <Breadcrumbs items={breadcrumbItems} />
       <h1>Tasks - {serviceName}</h1>
       <p>
         Found {tasks.length} task{tasks.length !== 1 ? 's' : ''}

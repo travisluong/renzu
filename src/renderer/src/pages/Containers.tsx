@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
-import { useParams, Link, useNavigate, useLocation } from 'react-router-dom'
+import { useParams, useNavigate, useLocation } from 'react-router-dom'
+import Breadcrumbs from '../components/Breadcrumbs'
 
 function Containers(): React.JSX.Element {
   const navigate = useNavigate()
@@ -10,6 +11,24 @@ function Containers(): React.JSX.Element {
     serviceName: string
     taskArn: string
   }>()
+
+  const taskId = taskArn?.split('/').pop() || ''
+
+  const breadcrumbItems = [
+    { label: 'Clusters', path: '/clusters' },
+    {
+      label: clusterName || '',
+      path: `/clusters/${encodeURIComponent(clusterName || '')}/services`
+    },
+    {
+      label: serviceName || '',
+      path: `/clusters/${encodeURIComponent(clusterName || '')}/services/${encodeURIComponent(serviceName || '')}/tasks`
+    },
+    {
+      label: `Task ${taskId}`,
+      path: `/clusters/${encodeURIComponent(clusterName || '')}/services/${encodeURIComponent(serviceName || '')}/tasks/${encodeURIComponent(taskArn || '')}/containers`
+    }
+  ]
 
   // Store taskDefinitionArn in sessionStorage when available
   if (taskDefinitionArn && taskArn) {
@@ -29,11 +48,7 @@ function Containers(): React.JSX.Element {
   if (isLoading) {
     return (
       <div>
-        <Link
-          to={`/clusters/${encodeURIComponent(clusterName || '')}/services/${encodeURIComponent(serviceName || '')}/tasks`}
-        >
-          ← Back to Tasks
-        </Link>
+        <Breadcrumbs items={breadcrumbItems} />
         <h1>Containers</h1>
         <p>Loading containers...</p>
       </div>
@@ -43,11 +58,7 @@ function Containers(): React.JSX.Element {
   if (error) {
     return (
       <div>
-        <Link
-          to={`/clusters/${encodeURIComponent(clusterName || '')}/services/${encodeURIComponent(serviceName || '')}/tasks`}
-        >
-          ← Back to Tasks
-        </Link>
+        <Breadcrumbs items={breadcrumbItems} />
         <h1>Containers</h1>
         <p style={{ color: 'red' }}>
           Error: {error instanceof Error ? error.message : 'Failed to fetch containers'}
@@ -59,11 +70,7 @@ function Containers(): React.JSX.Element {
   if (containers.length === 0) {
     return (
       <div>
-        <Link
-          to={`/clusters/${encodeURIComponent(clusterName || '')}/services/${encodeURIComponent(serviceName || '')}/tasks`}
-        >
-          ← Back to Tasks
-        </Link>
+        <Breadcrumbs items={breadcrumbItems} />
         <h1>Containers - {taskArn?.split('/').pop()}</h1>
         <p>No containers found for this task.</p>
       </div>
@@ -72,11 +79,7 @@ function Containers(): React.JSX.Element {
 
   return (
     <div>
-      <Link
-        to={`/clusters/${encodeURIComponent(clusterName || '')}/services/${encodeURIComponent(serviceName || '')}/tasks`}
-      >
-        ← Back to Tasks
-      </Link>
+      <Breadcrumbs items={breadcrumbItems} />
       <h1>Containers - {taskArn?.split('/').pop()}</h1>
       <p>
         Found {containers.length} container{containers.length !== 1 ? 's' : ''}

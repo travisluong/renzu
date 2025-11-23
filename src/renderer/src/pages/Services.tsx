@@ -1,10 +1,19 @@
 import { useQuery } from '@tanstack/react-query'
-import { useParams, Link, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import type { Service } from '../../../preload/index.d'
+import Breadcrumbs from '../components/Breadcrumbs'
 
 function Services(): React.JSX.Element {
   const navigate = useNavigate()
   const { clusterName } = useParams<{ clusterName: string }>()
+
+  const breadcrumbItems = [
+    { label: 'Clusters', path: '/clusters' },
+    {
+      label: clusterName || '',
+      path: `/clusters/${encodeURIComponent(clusterName || '')}/services`
+    }
+  ]
 
   const {
     data: services = [],
@@ -19,7 +28,7 @@ function Services(): React.JSX.Element {
   if (isLoading) {
     return (
       <div>
-        <Link to="/clusters">← Back to Clusters</Link>
+        <Breadcrumbs items={breadcrumbItems} />
         <h1>Services</h1>
         <p>Loading services...</p>
       </div>
@@ -29,7 +38,7 @@ function Services(): React.JSX.Element {
   if (error) {
     return (
       <div>
-        <Link to="/clusters">← Back to Clusters</Link>
+        <Breadcrumbs items={breadcrumbItems} />
         <h1>Services</h1>
         <p style={{ color: 'red' }}>
           Error: {error instanceof Error ? error.message : 'Failed to fetch services'}
@@ -41,7 +50,7 @@ function Services(): React.JSX.Element {
   if (services.length === 0) {
     return (
       <div>
-        <Link to="/clusters">← Back to Clusters</Link>
+        <Breadcrumbs items={breadcrumbItems} />
         <h1>Services</h1>
         <p>No services found in this cluster.</p>
       </div>
@@ -50,7 +59,7 @@ function Services(): React.JSX.Element {
 
   return (
     <div>
-      <Link to="/clusters">← Back to Clusters</Link>
+      <Breadcrumbs items={breadcrumbItems} />
       <h1>Services</h1>
       <p>
         Found {services.length} service{services.length !== 1 ? 's' : ''}

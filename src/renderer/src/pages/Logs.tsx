@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
-import { useParams, Link } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { useRef, useEffect, useState } from 'react'
+import Breadcrumbs from '../components/Breadcrumbs'
 
 interface LogEntry {
   timestamp: number
@@ -15,6 +16,28 @@ function Logs(): React.JSX.Element {
     taskArn: string
     containerName: string
   }>()
+
+  const taskId = taskArn?.split('/').pop() || ''
+
+  const breadcrumbItems = [
+    { label: 'Clusters', path: '/clusters' },
+    {
+      label: clusterName || '',
+      path: `/clusters/${encodeURIComponent(clusterName || '')}/services`
+    },
+    {
+      label: serviceName || '',
+      path: `/clusters/${encodeURIComponent(clusterName || '')}/services/${encodeURIComponent(serviceName || '')}/tasks`
+    },
+    {
+      label: `Task ${taskId}`,
+      path: `/clusters/${encodeURIComponent(clusterName || '')}/services/${encodeURIComponent(serviceName || '')}/tasks/${encodeURIComponent(taskArn || '')}/containers`
+    },
+    {
+      label: containerName || '',
+      path: `/clusters/${encodeURIComponent(clusterName || '')}/services/${encodeURIComponent(serviceName || '')}/tasks/${encodeURIComponent(taskArn || '')}/containers/${encodeURIComponent(containerName || '')}/logs`
+    }
+  ]
 
   const [allLogs, setAllLogs] = useState<LogEntry[]>([])
   const [autoScroll, setAutoScroll] = useState(true)
@@ -99,11 +122,7 @@ function Logs(): React.JSX.Element {
   if (isLoadingConfig) {
     return (
       <div>
-        <Link
-          to={`/clusters/${encodeURIComponent(clusterName || '')}/services/${encodeURIComponent(serviceName || '')}/tasks/${encodeURIComponent(taskArn || '')}/containers`}
-        >
-          ← Back to Containers
-        </Link>
+        <Breadcrumbs items={breadcrumbItems} />
         <h1>Logs - {containerName}</h1>
         <p>Loading log configuration...</p>
       </div>
@@ -113,11 +132,7 @@ function Logs(): React.JSX.Element {
   if (configError) {
     return (
       <div>
-        <Link
-          to={`/clusters/${encodeURIComponent(clusterName || '')}/services/${encodeURIComponent(serviceName || '')}/tasks/${encodeURIComponent(taskArn || '')}/containers`}
-        >
-          ← Back to Containers
-        </Link>
+        <Breadcrumbs items={breadcrumbItems} />
         <h1>Logs - {containerName}</h1>
         <p style={{ color: 'red' }}>
           Error loading log configuration:{' '}
@@ -134,11 +149,7 @@ function Logs(): React.JSX.Element {
   if (!logConfig) {
     return (
       <div>
-        <Link
-          to={`/clusters/${encodeURIComponent(clusterName || '')}/services/${encodeURIComponent(serviceName || '')}/tasks/${encodeURIComponent(taskArn || '')}/containers`}
-        >
-          ← Back to Containers
-        </Link>
+        <Breadcrumbs items={breadcrumbItems} />
         <h1>Logs - {containerName}</h1>
         <p>No log configuration available</p>
       </div>
@@ -154,13 +165,7 @@ function Logs(): React.JSX.Element {
         width: '100%'
       }}
     >
-      <div style={{ marginBottom: '16px' }}>
-        <Link
-          to={`/clusters/${encodeURIComponent(clusterName || '')}/services/${encodeURIComponent(serviceName || '')}/tasks/${encodeURIComponent(taskArn || '')}/containers`}
-        >
-          ← Back to Containers
-        </Link>
-      </div>
+      <Breadcrumbs items={breadcrumbItems} />
 
       <div style={{ marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '12px' }}>
         <h1 style={{ margin: 0 }}>Logs - {containerName}</h1>
