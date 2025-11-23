@@ -1,7 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { useParams, Link, useLocation } from 'react-router-dom'
 import { useRef, useEffect, useState } from 'react'
-import { List, useListRef } from 'react-window'
 
 interface LogEntry {
   timestamp: number
@@ -24,7 +23,7 @@ function Logs(): React.JSX.Element {
   const [isTailing, setIsTailing] = useState(false)
   const nextTokenRef = useRef<string | undefined>(undefined)
   const logStreamNameRef = useRef<string | undefined>(undefined)
-  const listRef = useListRef(null)
+  const logsContainerRef = useRef<HTMLDivElement>(null)
 
   const {
     data: logConfig,
@@ -74,10 +73,10 @@ function Logs(): React.JSX.Element {
 
   // Auto-scroll to bottom when new logs arrive
   useEffect(() => {
-    if (autoScroll && listRef.current && allLogs.length > 0) {
-      listRef.current.scrollToRow({ index: allLogs.length - 1, align: 'end' })
+    if (autoScroll && logsContainerRef.current && allLogs.length > 0) {
+      logsContainerRef.current.scrollTop = logsContainerRef.current.scrollHeight
     }
-  }, [allLogs, autoScroll, listRef])
+  }, [allLogs, autoScroll])
 
   const formatTimestamp = (timestamp: number): string => {
     const date = new Date(timestamp)
@@ -225,8 +224,8 @@ function Logs(): React.JSX.Element {
             <button
               onClick={() => {
                 setAutoScroll(true)
-                if (listRef.current) {
-                  listRef.current.scrollToRow({ index: allLogs.length - 1, align: 'end' })
+                if (logsContainerRef.current) {
+                  logsContainerRef.current.scrollTop = logsContainerRef.current.scrollHeight
                 }
               }}
               style={{
@@ -284,36 +283,38 @@ function Logs(): React.JSX.Element {
             {isTailing ? 'Waiting for logs...' : 'Click "Start Tailing" to view logs'}
           </div>
         ) : (
-          <List
-            listRef={listRef}
-            defaultHeight={600}
-            rowCount={allLogs.length}
-            rowHeight={22}
-            rowProps={{}}
-            rowComponent={({ index, style }) => {
-              const log = allLogs[index]
-              return (
-                <div
-                  style={{
-                    ...style,
-                    fontSize: '12px',
-                    fontFamily: 'monospace',
-                    padding: '2px 12px',
-                    whiteSpace: 'pre-wrap',
-                    wordBreak: 'break-word',
-                    borderBottom: '1px solid #1a1a1a',
-                    display: 'flex',
-                    alignItems: 'center'
-                  }}
-                >
-                  <span style={{ color: '#888', marginRight: '8px', flexShrink: 0 }}>
-                    {formatTimestamp(log.timestamp)}
-                  </span>
-                  <span>{log.message}</span>
-                </div>
-              )
+          <div
+            ref={logsContainerRef}
+            style={{
+              height: '100%',
+              overflowY: 'auto',
+              overflowX: 'hidden'
             }}
-          />
+          >
+            {allLogs.map((log, index) => (
+              <div
+                key={`${log.timestamp}-${index}`}
+                style={{
+                  fontSize: '12px',
+                  fontFamily: 'monospace',
+                  padding: '4px 12px',
+                  whiteSpace: 'pre-wrap',
+                  wordBreak: 'break-word',
+                  borderBottom: '1px solid #1a1a1a',
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  minHeight: '22px',
+                  userSelect: 'text',
+                  cursor: 'text'
+                }}
+              >
+                <span style={{ color: '#888', marginRight: '8px', flexShrink: 0 }}>
+                  {formatTimestamp(log.timestamp)}
+                </span>
+                <span style={{ flex: 1 }}>{log.message}</span>
+              </div>
+            ))}
+          </div>
         )}
       </div>
     </div>
