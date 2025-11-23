@@ -11,6 +11,11 @@ function Containers(): React.JSX.Element {
     taskArn: string
   }>()
 
+  // Store taskDefinitionArn in sessionStorage when available
+  if (taskDefinitionArn && taskArn) {
+    sessionStorage.setItem(`taskDef:${taskArn}`, taskDefinitionArn)
+  }
+
   const {
     data: containers = [],
     isLoading,
@@ -82,8 +87,7 @@ function Containers(): React.JSX.Element {
             key={container.containerArn}
             onClick={() => {
               navigate(
-                `/clusters/${encodeURIComponent(clusterName || '')}/services/${encodeURIComponent(serviceName || '')}/tasks/${encodeURIComponent(taskArn || '')}/containers/${encodeURIComponent(container.name)}/logs`,
-                { state: { taskDefinitionArn } }
+                `/clusters/${encodeURIComponent(clusterName || '')}/services/${encodeURIComponent(serviceName || '')}/tasks/${encodeURIComponent(taskArn || '')}/containers/${encodeURIComponent(container.name)}/logs`
               )
             }}
             style={{

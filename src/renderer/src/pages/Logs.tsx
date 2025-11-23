@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { useParams, Link, useLocation } from 'react-router-dom'
+import { useParams, Link } from 'react-router-dom'
 import { useRef, useEffect, useState } from 'react'
 
 interface LogEntry {
@@ -15,8 +15,6 @@ function Logs(): React.JSX.Element {
     taskArn: string
     containerName: string
   }>()
-  const location = useLocation()
-  const taskDefinitionArn = (location.state as { taskDefinitionArn?: string })?.taskDefinitionArn
 
   const [allLogs, setAllLogs] = useState<LogEntry[]>([])
   const [autoScroll, setAutoScroll] = useState(true)
@@ -24,6 +22,9 @@ function Logs(): React.JSX.Element {
   const nextTokenRef = useRef<string | undefined>(undefined)
   const logStreamNameRef = useRef<string | undefined>(undefined)
   const logsContainerRef = useRef<HTMLDivElement>(null)
+
+  // Retrieve taskDefinitionArn from sessionStorage
+  const taskDefinitionArn = taskArn ? sessionStorage.getItem(`taskDef:${taskArn}`) : null
 
   const {
     data: logConfig,
