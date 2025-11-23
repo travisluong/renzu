@@ -5,8 +5,7 @@ body {
   align-items: flex-start;
   justify-content: center;
   overflow-y: auto;
-  background-image: url('./wavy-lines.svg');
-  background-size: cover;
+  background-color: #2a2a2a;
   user-select: none;
 }
 
