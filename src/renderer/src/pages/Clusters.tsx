@@ -69,11 +69,7 @@ function Clusters(): React.JSX.Element {
         </thead>
         <tbody>
           {clusters.map((cluster) => (
-            <tr
-              key={cluster.arn}
-              onClick={() => navigate(`/clusters/${encodeURIComponent(cluster.arn)}/services`)}
-              className={styles.tableRow}
-            >
+            <tr key={cluster.arn} className={styles.tableRow}>
               <td className={styles.tableCellName}>{cluster.name}</td>
               <td className={styles.tableCell}>
                 <span
@@ -97,8 +93,13 @@ function Clusters(): React.JSX.Element {
               <td className={styles.actionCell}>
                 <button
                   className={styles.actionButton}
-                  onClick={(e) => {
-                    e.stopPropagation()
+                  onClick={() => navigate(`/clusters/${encodeURIComponent(cluster.arn)}/services`)}
+                >
+                  View Services
+                </button>
+                <button
+                  className={styles.actionButton}
+                  onClick={() => {
                     const region = cluster.arn.split(':')[3]
                     const clusterName = cluster.arn.split('/')[1]
                     const url = `https://console.aws.amazon.com/ecs/v2/clusters/${clusterName}?region=${region}`
