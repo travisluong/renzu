@@ -6,6 +6,7 @@ import ClusterDetails from './pages/ClusterDetails'
 import Services from './pages/Services'
 import ServiceDetails from './pages/ServiceDetails'
 import Tasks from './pages/Tasks'
+import TaskDetails from './pages/TaskDetails'
 import Containers from './pages/Containers'
 import Logs from './pages/Logs'
 
@@ -21,6 +22,10 @@ function App(): React.JSX.Element {
         element={<ServiceDetails />}
       />
       <Route path="/clusters/:clusterName/services/:serviceName/tasks" element={<Tasks />} />
+      <Route
+        path="/clusters/:clusterName/services/:serviceName/tasks/:taskArn/details"
+        element={<TaskDetails />}
+      />
       <Route
         path="/clusters/:clusterName/services/:serviceName/tasks/:taskArn/containers"
         element={<Containers />}

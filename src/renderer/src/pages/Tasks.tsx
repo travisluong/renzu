@@ -133,6 +133,16 @@ function Tasks(): React.JSX.Element {
                   className={styles.actionButton}
                   onClick={() =>
                     navigate(
+                      `/clusters/${encodeURIComponent(clusterName || '')}/services/${encodeURIComponent(serviceName || '')}/tasks/${encodeURIComponent(task.taskArn)}/details`
+                    )
+                  }
+                >
+                  View Details
+                </button>
+                <button
+                  className={styles.actionButton}
+                  onClick={() =>
+                    navigate(
                       `/clusters/${encodeURIComponent(clusterName || '')}/services/${encodeURIComponent(serviceName || '')}/tasks/${encodeURIComponent(task.taskArn)}/containers`,
                       { state: { taskDefinitionArn: task.taskDefinitionArn } }
                     )

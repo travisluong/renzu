@@ -86,6 +86,7 @@ export interface ECSAPI {
   listServices: (clusterArn: string) => Promise<Service[]>
   getServiceDetails: (clusterArn: string, serviceName: string) => Promise<any>
   listTasks: (clusterArn: string, serviceName: string) => Promise<Task[]>
+  getTaskDetails: (clusterArn: string, taskArn: string) => Promise<any>
   getTaskContainers: (clusterArn: string, taskArn: string) => Promise<Container[]>
 }
 

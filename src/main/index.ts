@@ -8,7 +8,8 @@ import {
   listTasks,
   getTaskContainers,
   getClusterDetails,
-  getServiceDetails
+  getServiceDetails,
+  getTaskDetails
 } from './services/ecs-service'
 import { getLogConfiguration, getContainerLogs } from './services/logs-service'
 
@@ -100,6 +101,15 @@ app.whenReady().then(() => {
       }
     }
   )
+
+  ipcMain.handle('ecs:getTaskDetails', async (_event, clusterArn: string, taskArn: string) => {
+    try {
+      return await getTaskDetails(clusterArn, taskArn)
+    } catch (error) {
+      console.error('IPC ecs:getTaskDetails error:', error)
+      throw error
+    }
+  })
 
   ipcMain.handle('ecs:listTasks', async (_event, clusterArn: string, serviceName: string) => {
     try {

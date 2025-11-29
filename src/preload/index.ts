@@ -12,6 +12,8 @@ const api = {
       ipcRenderer.invoke('ecs:getServiceDetails', clusterArn, serviceName),
     listTasks: (clusterArn: string, serviceName: string) =>
       ipcRenderer.invoke('ecs:listTasks', clusterArn, serviceName),
+    getTaskDetails: (clusterArn: string, taskArn: string) =>
+      ipcRenderer.invoke('ecs:getTaskDetails', clusterArn, taskArn),
     getTaskContainers: (clusterArn: string, taskArn: string) =>
       ipcRenderer.invoke('ecs:getTaskContainers', clusterArn, taskArn)
   },

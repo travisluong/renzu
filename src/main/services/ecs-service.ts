@@ -314,6 +314,93 @@ export async function getServiceDetails(clusterArn: string, serviceName: string)
   }
 }
 
+export async function getTaskDetails(clusterArn: string, taskArn: string): Promise<any> {
+  try {
+    const { configFile } = await loadSharedConfigFiles()
+    const defaultRegion = configFile?.default?.region || 'us-east-1'
+
+    const client = new ECSClient({
+      region: defaultRegion,
+      credentials: fromIni()
+    })
+
+    const command = new DescribeTasksCommand({
+      cluster: clusterArn,
+      tasks: [taskArn],
+      include: ['TAGS']
+    })
+    const response = await client.send(command)
+
+    if (!response.tasks || response.tasks.length === 0) {
+      throw new Error('Task not found')
+    }
+
+    const task = response.tasks[0]
+    return {
+      taskArn: task.taskArn || '',
+      taskDefinitionArn: task.taskDefinitionArn || '',
+      clusterArn: task.clusterArn || '',
+      lastStatus: task.lastStatus || 'UNKNOWN',
+      desiredStatus: task.desiredStatus || 'UNKNOWN',
+      cpu: task.cpu || '0',
+      memory: task.memory || '0',
+      createdAt: task.createdAt?.toISOString() || '',
+      startedAt: task.startedAt?.toISOString(),
+      stoppedAt: task.stoppedAt?.toISOString(),
+      stoppedReason: task.stoppedReason,
+      stopCode: task.stopCode,
+      connectivity: task.connectivity,
+      connectivityAt: task.connectivityAt?.toISOString(),
+      pullStartedAt: task.pullStartedAt?.toISOString(),
+      pullStoppedAt: task.pullStoppedAt?.toISOString(),
+      executionStoppedAt: task.executionStoppedAt?.toISOString(),
+      launchType: task.launchType || 'UNKNOWN',
+      platformVersion: task.platformVersion,
+      platformFamily: task.platformFamily,
+      availabilityZone: task.availabilityZone,
+      group: task.group,
+      containers:
+        task.containers?.map((container) => ({
+          containerArn: container.containerArn || '',
+          name: container.name || 'Unknown',
+          lastStatus: container.lastStatus || 'UNKNOWN',
+          exitCode: container.exitCode,
+          reason: container.reason,
+          image: container.image || '',
+          runtimeId: container.runtimeId || '',
+          healthStatus: container.healthStatus,
+          networkBindings:
+            container.networkBindings?.map((binding) => ({
+              bindIP: binding.bindIP || '',
+              containerPort: binding.containerPort || 0,
+              hostPort: binding.hostPort || 0,
+              protocol: binding.protocol || ''
+            })) || [],
+          networkInterfaces:
+            container.networkInterfaces?.map((iface) => ({
+              privateIpv4Address: iface.privateIpv4Address || '',
+              attachmentId: iface.attachmentId || ''
+            })) || []
+        })) || [],
+      attachments:
+        task.attachments?.map((attachment) => ({
+          id: attachment.id || '',
+          type: attachment.type || '',
+          status: attachment.status || '',
+          details:
+            attachment.details?.map((detail) => ({
+              name: detail.name || '',
+              value: detail.value || ''
+            })) || []
+        })) || [],
+      tags: task.tags?.map((tag) => ({ key: tag.key || '', value: tag.value || '' })) || []
+    }
+  } catch (error) {
+    console.error('Error getting task details:', error)
+    throw error
+  }
+}
+
 export async function listTasks(clusterArn: string, serviceName: string): Promise<Task[]> {
   try {
     // Load AWS config to get default region
