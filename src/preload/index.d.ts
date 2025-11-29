@@ -82,6 +82,7 @@ export interface LogsResponse {
 
 export interface ECSAPI {
   listClusters: () => Promise<Cluster[]>
+  getClusterDetails: (clusterArn: string) => Promise<any>
   listServices: (clusterArn: string) => Promise<Service[]>
   listTasks: (clusterArn: string, serviceName: string) => Promise<Task[]>
   getTaskContainers: (clusterArn: string, taskArn: string) => Promise<Container[]>

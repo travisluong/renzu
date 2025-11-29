@@ -118,6 +118,58 @@ export async function listClusters(): Promise<Cluster[]> {
   }
 }
 
+export async function getClusterDetails(clusterArn: string): Promise<any> {
+  try {
+    const { configFile } = await loadSharedConfigFiles()
+    const defaultRegion = configFile?.default?.region || 'us-east-1'
+
+    const client = new ECSClient({
+      region: defaultRegion,
+      credentials: fromIni()
+    })
+
+    const command = new DescribeClustersCommand({
+      clusters: [clusterArn],
+      include: ['TAGS', 'SETTINGS', 'STATISTICS']
+    })
+    const response = await client.send(command)
+
+    if (!response.clusters || response.clusters.length === 0) {
+      throw new Error('Cluster not found')
+    }
+
+    const cluster = response.clusters[0]
+    return {
+      name: cluster.clusterName || 'Unknown',
+      arn: cluster.clusterArn || '',
+      status: cluster.status || 'UNKNOWN',
+      registeredContainerInstancesCount: cluster.registeredContainerInstancesCount || 0,
+      runningTasksCount: cluster.runningTasksCount || 0,
+      pendingTasksCount: cluster.pendingTasksCount || 0,
+      activeServicesCount: cluster.activeServicesCount || 0,
+      tags: cluster.tags?.map((tag) => ({ key: tag.key || '', value: tag.value || '' })) || [],
+      settings:
+        cluster.settings?.map((setting) => ({
+          name: setting.name || '',
+          value: setting.value || ''
+        })) || [],
+      statistics:
+        cluster.statistics?.map((stat) => ({ name: stat.name || '', value: stat.value || '' })) ||
+        [],
+      capacityProviders: cluster.capacityProviders || [],
+      defaultCapacityProviderStrategy:
+        cluster.defaultCapacityProviderStrategy?.map((strategy) => ({
+          capacityProvider: strategy.capacityProvider || '',
+          weight: strategy.weight || 0,
+          base: strategy.base || 0
+        })) || []
+    }
+  } catch (error) {
+    console.error('Error getting cluster details:', error)
+    throw error
+  }
+}
+
 export async function listServices(clusterArn: string): Promise<Service[]> {
   try {
     // Load AWS config to get default region

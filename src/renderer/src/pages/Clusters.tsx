@@ -93,6 +93,12 @@ function Clusters(): React.JSX.Element {
               <td className={styles.actionCell}>
                 <button
                   className={styles.actionButton}
+                  onClick={() => navigate(`/clusters/${encodeURIComponent(cluster.arn)}/details`)}
+                >
+                  View Details
+                </button>
+                <button
+                  className={styles.actionButton}
                   onClick={() => navigate(`/clusters/${encodeURIComponent(cluster.arn)}/services`)}
                 >
                   View Services
