@@ -100,20 +100,12 @@ function Tasks(): React.JSX.Element {
             <th>Created</th>
             <th>Started</th>
             <th>Containers</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
           {tasks.map((task) => (
-            <tr
-              key={task.taskArn}
-              className={styles.tableRow}
-              onClick={() =>
-                navigate(
-                  `/clusters/${encodeURIComponent(clusterName || '')}/services/${encodeURIComponent(serviceName || '')}/tasks/${encodeURIComponent(task.taskArn)}/containers`,
-                  { state: { taskDefinitionArn: task.taskDefinitionArn } }
-                )
-              }
-            >
+            <tr key={task.taskArn} className={styles.tableRow}>
               <td className={styles.taskId}>{task.taskArn.split('/').pop()}</td>
               <td>
                 <span className={getStatusClass(task.lastStatus)}>{task.lastStatus}</span>
@@ -135,6 +127,31 @@ function Tasks(): React.JSX.Element {
                     {container.name}: {container.lastStatus}
                   </div>
                 ))}
+              </td>
+              <td className={styles.actionCell}>
+                <button
+                  className={styles.actionButton}
+                  onClick={() =>
+                    navigate(
+                      `/clusters/${encodeURIComponent(clusterName || '')}/services/${encodeURIComponent(serviceName || '')}/tasks/${encodeURIComponent(task.taskArn)}/containers`,
+                      { state: { taskDefinitionArn: task.taskDefinitionArn } }
+                    )
+                  }
+                >
+                  View Containers
+                </button>
+                <button
+                  className={styles.actionButton}
+                  onClick={() => {
+                    const region = task.taskArn.split(':')[3]
+                    const clusterName = task.taskArn.split(':')[5].split('/')[1]
+                    const taskId = task.taskArn.split('/').pop()
+                    const url = `https://console.aws.amazon.com/ecs/v2/clusters/${clusterName}/tasks/${taskId}?region=${region}`
+                    window.open(url, '_blank')
+                  }}
+                >
+                  Open in AWS
+                </button>
               </td>
             </tr>
           ))}

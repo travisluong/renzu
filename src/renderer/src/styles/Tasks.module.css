@@ -57,12 +57,6 @@
 
 .tableRow {
   border-bottom: 1px solid #2a2a2a;
-  cursor: pointer;
-  transition: background-color 0.15s ease;
-}
-
-.tableRow:hover {
-  background-color: rgba(42, 42, 42, 0.5);
 }
 
 .tableRow td {
@@ -128,4 +122,31 @@
 .containerItem {
   margin-bottom: 4px;
   color: #aaa;
+}
+
+.actionCell {
+  padding: 12px 16px;
+  text-align: center;
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.actionButton {
+  padding: 6px 12px;
+  background-color: #007acc;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.actionButton:hover {
+  background-color: #005a9e;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 122, 204, 0.3);
 }
