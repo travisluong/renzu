@@ -64,6 +64,7 @@ function Clusters(): React.JSX.Element {
             <th className={styles.tableHeaderRight}>Running Tasks</th>
             <th className={styles.tableHeaderRight}>Pending Tasks</th>
             <th className={styles.tableHeaderRight}>Active Services</th>
+            <th className={styles.tableHeader}>Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -92,6 +93,20 @@ function Clusters(): React.JSX.Element {
               </td>
               <td className={`${styles.tableCellRightBold} ${styles.activeServices}`}>
                 {cluster.activeServicesCount}
+              </td>
+              <td className={styles.actionCell}>
+                <button
+                  className={styles.actionButton}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    const region = cluster.arn.split(':')[3]
+                    const clusterName = cluster.arn.split('/')[1]
+                    const url = `https://console.aws.amazon.com/ecs/v2/clusters/${clusterName}?region=${region}`
+                    window.open(url, '_blank')
+                  }}
+                >
+                  Open in AWS
+                </button>
               </td>
             </tr>
           ))}
