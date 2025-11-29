@@ -161,6 +161,18 @@ function Containers(): React.JSX.Element {
                 >
                   View Logs
                 </button>
+                <button
+                  className={styles.actionButton}
+                  onClick={() => {
+                    const region = taskArn?.split(':')[3]
+                    const cluster = taskArn?.split(':')[5].split('/')[1]
+                    const taskId = taskArn?.split('/').pop()
+                    const url = `https://console.aws.amazon.com/ecs/v2/clusters/${cluster}/tasks/${taskId}?region=${region}`
+                    window.open(url, '_blank')
+                  }}
+                >
+                  Open in AWS
+                </button>
               </td>
             </tr>
           ))}
