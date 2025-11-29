@@ -8,6 +8,7 @@ import ServiceDetails from './pages/ServiceDetails'
 import Tasks from './pages/Tasks'
 import TaskDetails from './pages/TaskDetails'
 import Containers from './pages/Containers'
+import ContainerDetails from './pages/ContainerDetails'
 import Logs from './pages/Logs'
 
 function App(): React.JSX.Element {
@@ -29,6 +30,10 @@ function App(): React.JSX.Element {
       <Route
         path="/clusters/:clusterName/services/:serviceName/tasks/:taskArn/containers"
         element={<Containers />}
+      />
+      <Route
+        path="/clusters/:clusterName/services/:serviceName/tasks/:taskArn/containers/:containerName/details"
+        element={<ContainerDetails />}
       />
       <Route
         path="/clusters/:clusterName/services/:serviceName/tasks/:taskArn/containers/:containerName/logs"
