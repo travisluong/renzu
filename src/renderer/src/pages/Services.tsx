@@ -74,19 +74,12 @@ function Services(): React.JSX.Element {
             <th className={styles.tableHeaderRight}>Pending</th>
             <th className={styles.tableHeader}>Launch Type</th>
             <th className={styles.tableHeader}>Task Definition</th>
+            <th className={styles.tableHeader}>Actions</th>
           </tr>
         </thead>
         <tbody>
           {services.map((service) => (
-            <tr
-              key={service.arn}
-              onClick={() =>
-                navigate(
-                  `/clusters/${encodeURIComponent(clusterName || '')}/services/${encodeURIComponent(service.name)}/tasks`
-                )
-              }
-              className={styles.tableRow}
-            >
+            <tr key={service.arn} className={styles.tableRow}>
               <td className={styles.tableCellName}>{service.name}</td>
               <td className={styles.tableCell}>
                 <span
@@ -108,6 +101,30 @@ function Services(): React.JSX.Element {
               </td>
               <td className={styles.tableCell}>{service.launchType}</td>
               <td className={styles.taskDefinition}>{service.taskDefinition.split('/').pop()}</td>
+              <td className={styles.actionCell}>
+                <button
+                  className={styles.actionButton}
+                  onClick={() =>
+                    navigate(
+                      `/clusters/${encodeURIComponent(clusterName || '')}/services/${encodeURIComponent(service.name)}/tasks`
+                    )
+                  }
+                >
+                  View Tasks
+                </button>
+                <button
+                  className={styles.actionButton}
+                  onClick={() => {
+                    const region = service.arn.split(':')[3]
+                    const clusterName = service.arn.split(':')[5].split('/')[1]
+                    const serviceName = service.arn.split('/')[2]
+                    const url = `https://console.aws.amazon.com/ecs/v2/clusters/${clusterName}/services/${serviceName}?region=${region}`
+                    window.open(url, '_blank')
+                  }}
+                >
+                  Open in AWS
+                </button>
+              </td>
             </tr>
           ))}
         </tbody>
