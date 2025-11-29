@@ -30,7 +30,7 @@ code {
   align-items: flex-start;
   justify-content: flex-start;
   flex-direction: column;
-  padding: 20px;
+  padding: 0;
   width: 100%;
   max-width: 1200px;
 }

@@ -1,9 +1,17 @@
+.container {
+  padding: 0;
+}
+
+.content {
+  padding: 20px 16px;
+}
+
 .logsContainer {
   display: flex;
   flex-direction: column;
   height: calc(100vh - 40px);
   width: 100%;
-  padding: 20px;
+  padding: 0;
 }
 
 .header {

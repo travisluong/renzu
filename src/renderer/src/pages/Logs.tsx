@@ -122,135 +122,142 @@ function Logs(): React.JSX.Element {
 
   if (isLoadingConfig) {
     return (
-      <div className={styles.logsContainer}>
+      <div className={styles.container}>
         <Breadcrumbs items={breadcrumbItems} />
-        <h1 className={styles.title}>Logs - {containerName}</h1>
-        <p className={styles.loading}>Loading log configuration...</p>
+        <div className={styles.content}>
+          <h1 className={styles.title}>Logs - {containerName}</h1>
+          <p className={styles.loading}>Loading log configuration...</p>
+        </div>
       </div>
     )
   }
 
   if (configError) {
     return (
-      <div className={styles.logsContainer}>
+      <div className={styles.container}>
         <Breadcrumbs items={breadcrumbItems} />
-        <h1 className={styles.title}>Logs - {containerName}</h1>
-        <p className={styles.error}>
-          Error loading log configuration:{' '}
-          {configError instanceof Error ? configError.message : 'Unknown error'}
-        </p>
-        <p style={{ fontSize: '12px', color: '#888', marginTop: '10px' }}>
-          Make sure the container uses the awslogs log driver and has proper CloudWatch Logs
-          configuration.
-        </p>
+        <div className={styles.content}>
+          <h1 className={styles.title}>Logs - {containerName}</h1>
+          <p className={styles.error}>
+            Error loading log configuration:{' '}
+            {configError instanceof Error ? configError.message : 'Unknown error'}
+          </p>
+          <p style={{ fontSize: '12px', color: '#888', marginTop: '10px' }}>
+            Make sure the container uses the awslogs log driver and has proper CloudWatch Logs
+            configuration.
+          </p>
+        </div>
       </div>
     )
   }
 
   if (!logConfig) {
     return (
-      <div className={styles.logsContainer}>
+      <div className={styles.container}>
         <Breadcrumbs items={breadcrumbItems} />
-        <h1 className={styles.title}>Logs - {containerName}</h1>
-        <p className={styles.empty}>No log configuration available</p>
+        <div className={styles.content}>
+          <h1 className={styles.title}>Logs - {containerName}</h1>
+          <p className={styles.empty}>No log configuration available</p>
+        </div>
       </div>
     )
   }
 
   return (
-    <div className={styles.logsContainer}>
+    <div className={styles.container}>
       <Breadcrumbs items={breadcrumbItems} />
-
-      <div className={styles.header}>
-        <h1 className={styles.title}>Logs - {containerName}</h1>
-        {!isTailing ? (
-          <button onClick={startTailing} className={`${styles.button} ${styles.buttonStart}`}>
-            Start Tailing
-          </button>
-        ) : (
-          <>
-            <button onClick={stopTailing} className={`${styles.button} ${styles.buttonStop}`}>
-              Stop Tailing
+      <div className={styles.logsContainer}>
+        <div className={styles.header}>
+          <h1 className={styles.title}>Logs - {containerName}</h1>
+          {!isTailing ? (
+            <button onClick={startTailing} className={`${styles.button} ${styles.buttonStart}`}>
+              Start Tailing
             </button>
-            <span className={styles.logCount}>
-              {isLoadingLogs ? 'Loading...' : `${allLogs.length} logs`}
-            </span>
-          </>
-        )}
-      </div>
-
-      <div className={styles.configInfo}>
-        <div>
-          <span className={styles.configLabel}>Log Group:</span>
-          {logConfig.logGroupName}
-        </div>
-        <div>
-          <span className={styles.configLabel}>Log Stream:</span>
-          {logStreamNameRef.current}
-        </div>
-        <div>
-          <span className={styles.configLabel}>Region:</span>
-          {logConfig.region}
-        </div>
-      </div>
-
-      {isTailing && (
-        <div className={styles.controls}>
-          <label className={styles.checkboxLabel}>
-            <input
-              type="checkbox"
-              checked={autoScroll}
-              onChange={(e) => setAutoScroll(e.target.checked)}
-            />
-            Auto-scroll
-          </label>
-          {!autoScroll && (
-            <button
-              onClick={() => {
-                setAutoScroll(true)
-                if (logsContainerRef.current) {
-                  logsContainerRef.current.scrollTop = logsContainerRef.current.scrollHeight
-                }
-              }}
-              className={styles.buttonJump}
-            >
-              Jump to Bottom
-            </button>
+          ) : (
+            <>
+              <button onClick={stopTailing} className={`${styles.button} ${styles.buttonStop}`}>
+                Stop Tailing
+              </button>
+              <span className={styles.logCount}>
+                {isLoadingLogs ? 'Loading...' : `${allLogs.length} logs`}
+              </span>
+            </>
           )}
         </div>
-      )}
 
-      {logsError && (
-        <div className={styles.errorBox}>
-          <div className={styles.errorTitle}>Error loading logs:</div>
-          <div className={styles.errorMessage}>
-            {logsError instanceof Error ? logsError.message : 'Unknown error'}
+        <div className={styles.configInfo}>
+          <div>
+            <span className={styles.configLabel}>Log Group:</span>
+            {logConfig.logGroupName}
           </div>
-          {logsError instanceof Error &&
-            logsError.message.includes('ResourceNotFoundException') && (
-              <div className={styles.errorHint}>
-                The log stream may not exist yet. The container might still be starting up, or logs
-                haven&apos;t been created.
-              </div>
-            )}
+          <div>
+            <span className={styles.configLabel}>Log Stream:</span>
+            {logStreamNameRef.current}
+          </div>
+          <div>
+            <span className={styles.configLabel}>Region:</span>
+            {logConfig.region}
+          </div>
         </div>
-      )}
 
-      <div className={styles.logsViewer}>
-        {allLogs.length === 0 && !isLoadingLogs ? (
-          <div className={styles.emptyState}>
-            {isTailing ? 'Waiting for logs...' : 'Click "Start Tailing" to view logs'}
-          </div>
-        ) : (
-          <div ref={logsContainerRef} className={styles.logsContent}>
-            {allLogs.map((log, index) => (
-              <div key={`${log.timestamp}-${index}`} className={styles.logEntry}>
-                <span className={styles.logTimestamp}>{formatTimestamp(log.timestamp)}</span>
-                <span className={styles.logMessage}>{log.message}</span>
-              </div>
-            ))}
+        {isTailing && (
+          <div className={styles.controls}>
+            <label className={styles.checkboxLabel}>
+              <input
+                type="checkbox"
+                checked={autoScroll}
+                onChange={(e) => setAutoScroll(e.target.checked)}
+              />
+              Auto-scroll
+            </label>
+            {!autoScroll && (
+              <button
+                onClick={() => {
+                  setAutoScroll(true)
+                  if (logsContainerRef.current) {
+                    logsContainerRef.current.scrollTop = logsContainerRef.current.scrollHeight
+                  }
+                }}
+                className={styles.buttonJump}
+              >
+                Jump to Bottom
+              </button>
+            )}
           </div>
         )}
+
+        {logsError && (
+          <div className={styles.errorBox}>
+            <div className={styles.errorTitle}>Error loading logs:</div>
+            <div className={styles.errorMessage}>
+              {logsError instanceof Error ? logsError.message : 'Unknown error'}
+            </div>
+            {logsError instanceof Error &&
+              logsError.message.includes('ResourceNotFoundException') && (
+                <div className={styles.errorHint}>
+                  The log stream may not exist yet. The container might still be starting up, or
+                  logs haven&apos;t been created.
+                </div>
+              )}
+          </div>
+        )}
+
+        <div className={styles.logsViewer}>
+          {allLogs.length === 0 && !isLoadingLogs ? (
+            <div className={styles.emptyState}>
+              {isTailing ? 'Waiting for logs...' : 'Click "Start Tailing" to view logs'}
+            </div>
+          ) : (
+            <div ref={logsContainerRef} className={styles.logsContent}>
+              {allLogs.map((log, index) => (
+                <div key={`${log.timestamp}-${index}`} className={styles.logEntry}>
+                  <span className={styles.logTimestamp}>{formatTimestamp(log.timestamp)}</span>
+                  <span className={styles.logMessage}>{log.message}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )

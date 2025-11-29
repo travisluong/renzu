@@ -57,8 +57,10 @@ function ClusterDetails(): React.JSX.Element {
     return (
       <div className={styles.container}>
         <Breadcrumbs items={breadcrumbItems} />
-        <h1 className={styles.header}>Cluster Details</h1>
-        <p className={styles.loading}>Loading cluster details...</p>
+        <div className={styles.content}>
+          <h1 className={styles.header}>Cluster Details</h1>
+          <p className={styles.loading}>Loading cluster details...</p>
+        </div>
       </div>
     )
   }
@@ -67,10 +69,12 @@ function ClusterDetails(): React.JSX.Element {
     return (
       <div className={styles.container}>
         <Breadcrumbs items={breadcrumbItems} />
-        <h1 className={styles.header}>Cluster Details</h1>
-        <p className={styles.error}>
-          Error: {error instanceof Error ? error.message : 'Failed to fetch cluster details'}
-        </p>
+        <div className={styles.content}>
+          <h1 className={styles.header}>Cluster Details</h1>
+          <p className={styles.error}>
+            Error: {error instanceof Error ? error.message : 'Failed to fetch cluster details'}
+          </p>
+        </div>
       </div>
     )
   }
@@ -79,8 +83,10 @@ function ClusterDetails(): React.JSX.Element {
     return (
       <div className={styles.container}>
         <Breadcrumbs items={breadcrumbItems} />
-        <h1 className={styles.header}>Cluster Details</h1>
-        <p className={styles.empty}>Cluster not found.</p>
+        <div className={styles.content}>
+          <h1 className={styles.header}>Cluster Details</h1>
+          <p className={styles.empty}>Cluster not found.</p>
+        </div>
       </div>
     )
   }
@@ -88,100 +94,129 @@ function ClusterDetails(): React.JSX.Element {
   return (
     <div className={styles.container}>
       <Breadcrumbs items={breadcrumbItems} />
-      <div className={styles.headerSection}>
-        <h1 className={styles.header}>{cluster.name}</h1>
-        <div className={styles.headerActions}>
-          <button
-            className={styles.actionButton}
-            onClick={() => navigate(`/clusters/${encodeURIComponent(clusterName || '')}/services`)}
-          >
-            View Services
-          </button>
-          <button
-            className={styles.actionButton}
-            onClick={() => {
-              const region = cluster.arn.split(':')[3]
-              const clusterName = cluster.arn.split('/')[1]
-              const url = `https://console.aws.amazon.com/ecs/v2/clusters/${clusterName}?region=${region}`
-              window.open(url, '_blank')
-            }}
-          >
-            Open in AWS
-          </button>
-        </div>
-      </div>
-
-      <div className={styles.section}>
-        <h2 className={styles.sectionTitle}>Overview</h2>
-        <div className={styles.detailsGrid}>
-          <div className={styles.detailItem}>
-            <span className={styles.detailLabel}>ARN:</span>
-            <span className={styles.detailValue}>{cluster.arn}</span>
-          </div>
-          <div className={styles.detailItem}>
-            <span className={styles.detailLabel}>Status:</span>
-            <span
-              className={cluster.status === 'ACTIVE' ? styles.statusActive : styles.statusInactive}
+      <div className={styles.content}>
+        <div className={styles.headerSection}>
+          <h1 className={styles.header}>{cluster.name}</h1>
+          <div className={styles.headerActions}>
+            <button
+              className={styles.actionButton}
+              onClick={() =>
+                navigate(`/clusters/${encodeURIComponent(clusterName || '')}/services`)
+              }
             >
-              {cluster.status}
-            </span>
-          </div>
-          <div className={styles.detailItem}>
-            <span className={styles.detailLabel}>Container Instances:</span>
-            <span className={styles.detailValue}>{cluster.registeredContainerInstancesCount}</span>
-          </div>
-          <div className={styles.detailItem}>
-            <span className={styles.detailLabel}>Running Tasks:</span>
-            <span className={`${styles.detailValue} ${styles.runningCount}`}>
-              {cluster.runningTasksCount}
-            </span>
-          </div>
-          <div className={styles.detailItem}>
-            <span className={styles.detailLabel}>Pending Tasks:</span>
-            <span className={`${styles.detailValue} ${styles.pendingCount}`}>
-              {cluster.pendingTasksCount}
-            </span>
-          </div>
-          <div className={styles.detailItem}>
-            <span className={styles.detailLabel}>Active Services:</span>
-            <span className={`${styles.detailValue} ${styles.activeServices}`}>
-              {cluster.activeServicesCount}
-            </span>
+              View Services
+            </button>
+            <button
+              className={styles.actionButton}
+              onClick={() => {
+                const region = cluster.arn.split(':')[3]
+                const clusterName = cluster.arn.split('/')[1]
+                const url = `https://console.aws.amazon.com/ecs/v2/clusters/${clusterName}?region=${region}`
+                window.open(url, '_blank')
+              }}
+            >
+              Open in AWS
+            </button>
           </div>
         </div>
-      </div>
 
-      {cluster.capacityProviders && cluster.capacityProviders.length > 0 && (
         <div className={styles.section}>
-          <h2 className={styles.sectionTitle}>Capacity Providers</h2>
-          <div className={styles.listItems}>
-            {cluster.capacityProviders.map((provider, idx) => (
-              <div key={idx} className={styles.listItem}>
-                {provider}
-              </div>
-            ))}
+          <h2 className={styles.sectionTitle}>Overview</h2>
+          <div className={styles.detailsGrid}>
+            <div className={styles.detailItem}>
+              <span className={styles.detailLabel}>ARN:</span>
+              <span className={styles.detailValue}>{cluster.arn}</span>
+            </div>
+            <div className={styles.detailItem}>
+              <span className={styles.detailLabel}>Status:</span>
+              <span
+                className={
+                  cluster.status === 'ACTIVE' ? styles.statusActive : styles.statusInactive
+                }
+              >
+                {cluster.status}
+              </span>
+            </div>
+            <div className={styles.detailItem}>
+              <span className={styles.detailLabel}>Container Instances:</span>
+              <span className={styles.detailValue}>
+                {cluster.registeredContainerInstancesCount}
+              </span>
+            </div>
+            <div className={styles.detailItem}>
+              <span className={styles.detailLabel}>Running Tasks:</span>
+              <span className={`${styles.detailValue} ${styles.runningCount}`}>
+                {cluster.runningTasksCount}
+              </span>
+            </div>
+            <div className={styles.detailItem}>
+              <span className={styles.detailLabel}>Pending Tasks:</span>
+              <span className={`${styles.detailValue} ${styles.pendingCount}`}>
+                {cluster.pendingTasksCount}
+              </span>
+            </div>
+            <div className={styles.detailItem}>
+              <span className={styles.detailLabel}>Active Services:</span>
+              <span className={`${styles.detailValue} ${styles.activeServices}`}>
+                {cluster.activeServicesCount}
+              </span>
+            </div>
           </div>
         </div>
-      )}
 
-      {cluster.defaultCapacityProviderStrategy &&
-        cluster.defaultCapacityProviderStrategy.length > 0 && (
+        {cluster.capacityProviders && cluster.capacityProviders.length > 0 && (
           <div className={styles.section}>
-            <h2 className={styles.sectionTitle}>Default Capacity Provider Strategy</h2>
+            <h2 className={styles.sectionTitle}>Capacity Providers</h2>
+            <div className={styles.listItems}>
+              {cluster.capacityProviders.map((provider, idx) => (
+                <div key={idx} className={styles.listItem}>
+                  {provider}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {cluster.defaultCapacityProviderStrategy &&
+          cluster.defaultCapacityProviderStrategy.length > 0 && (
+            <div className={styles.section}>
+              <h2 className={styles.sectionTitle}>Default Capacity Provider Strategy</h2>
+              <table className={styles.table}>
+                <thead className={styles.tableHead}>
+                  <tr>
+                    <th>Capacity Provider</th>
+                    <th>Weight</th>
+                    <th>Base</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {cluster.defaultCapacityProviderStrategy.map((strategy, idx) => (
+                    <tr key={idx} className={styles.tableRow}>
+                      <td>{strategy.capacityProvider}</td>
+                      <td>{strategy.weight}</td>
+                      <td>{strategy.base}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+        {cluster.settings && cluster.settings.length > 0 && (
+          <div className={styles.section}>
+            <h2 className={styles.sectionTitle}>Settings</h2>
             <table className={styles.table}>
               <thead className={styles.tableHead}>
                 <tr>
-                  <th>Capacity Provider</th>
-                  <th>Weight</th>
-                  <th>Base</th>
+                  <th>Name</th>
+                  <th>Value</th>
                 </tr>
               </thead>
               <tbody>
-                {cluster.defaultCapacityProviderStrategy.map((strategy, idx) => (
+                {cluster.settings.map((setting, idx) => (
                   <tr key={idx} className={styles.tableRow}>
-                    <td>{strategy.capacityProvider}</td>
-                    <td>{strategy.weight}</td>
-                    <td>{strategy.base}</td>
+                    <td className={styles.settingName}>{setting.name}</td>
+                    <td>{setting.value}</td>
                   </tr>
                 ))}
               </tbody>
@@ -189,71 +224,50 @@ function ClusterDetails(): React.JSX.Element {
           </div>
         )}
 
-      {cluster.settings && cluster.settings.length > 0 && (
-        <div className={styles.section}>
-          <h2 className={styles.sectionTitle}>Settings</h2>
-          <table className={styles.table}>
-            <thead className={styles.tableHead}>
-              <tr>
-                <th>Name</th>
-                <th>Value</th>
-              </tr>
-            </thead>
-            <tbody>
-              {cluster.settings.map((setting, idx) => (
-                <tr key={idx} className={styles.tableRow}>
-                  <td className={styles.settingName}>{setting.name}</td>
-                  <td>{setting.value}</td>
+        {cluster.tags && cluster.tags.length > 0 && (
+          <div className={styles.section}>
+            <h2 className={styles.sectionTitle}>Tags</h2>
+            <table className={styles.table}>
+              <thead className={styles.tableHead}>
+                <tr>
+                  <th>Key</th>
+                  <th>Value</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+              </thead>
+              <tbody>
+                {cluster.tags.map((tag, idx) => (
+                  <tr key={idx} className={styles.tableRow}>
+                    <td className={styles.tagKey}>{tag.key}</td>
+                    <td>{tag.value}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
 
-      {cluster.tags && cluster.tags.length > 0 && (
-        <div className={styles.section}>
-          <h2 className={styles.sectionTitle}>Tags</h2>
-          <table className={styles.table}>
-            <thead className={styles.tableHead}>
-              <tr>
-                <th>Key</th>
-                <th>Value</th>
-              </tr>
-            </thead>
-            <tbody>
-              {cluster.tags.map((tag, idx) => (
-                <tr key={idx} className={styles.tableRow}>
-                  <td className={styles.tagKey}>{tag.key}</td>
-                  <td>{tag.value}</td>
+        {cluster.statistics && cluster.statistics.length > 0 && (
+          <div className={styles.section}>
+            <h2 className={styles.sectionTitle}>Statistics</h2>
+            <table className={styles.table}>
+              <thead className={styles.tableHead}>
+                <tr>
+                  <th>Name</th>
+                  <th>Value</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-
-      {cluster.statistics && cluster.statistics.length > 0 && (
-        <div className={styles.section}>
-          <h2 className={styles.sectionTitle}>Statistics</h2>
-          <table className={styles.table}>
-            <thead className={styles.tableHead}>
-              <tr>
-                <th>Name</th>
-                <th>Value</th>
-              </tr>
-            </thead>
-            <tbody>
-              {cluster.statistics.map((stat, idx) => (
-                <tr key={idx} className={styles.tableRow}>
-                  <td>{stat.name}</td>
-                  <td>{stat.value}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+              </thead>
+              <tbody>
+                {cluster.statistics.map((stat, idx) => (
+                  <tr key={idx} className={styles.tableRow}>
+                    <td>{stat.name}</td>
+                    <td>{stat.value}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
     </div>
   )
 }

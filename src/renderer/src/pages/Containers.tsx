@@ -74,8 +74,10 @@ function Containers(): React.JSX.Element {
     return (
       <div className={styles.container}>
         <Breadcrumbs items={breadcrumbItems} />
-        <h1 className={styles.header}>Containers</h1>
-        <p className={styles.loading}>Loading containers...</p>
+        <div className={styles.content}>
+          <h1 className={styles.header}>Containers</h1>
+          <p className={styles.loading}>Loading containers...</p>
+        </div>
       </div>
     )
   }
@@ -84,10 +86,12 @@ function Containers(): React.JSX.Element {
     return (
       <div className={styles.container}>
         <Breadcrumbs items={breadcrumbItems} />
-        <h1 className={styles.header}>Containers</h1>
-        <p className={styles.error}>
-          Error: {error instanceof Error ? error.message : 'Failed to fetch containers'}
-        </p>
+        <div className={styles.content}>
+          <h1 className={styles.header}>Containers</h1>
+          <p className={styles.error}>
+            Error: {error instanceof Error ? error.message : 'Failed to fetch containers'}
+          </p>
+        </div>
       </div>
     )
   }
@@ -96,8 +100,10 @@ function Containers(): React.JSX.Element {
     return (
       <div className={styles.container}>
         <Breadcrumbs items={breadcrumbItems} />
-        <h1 className={styles.header}>Containers - {taskArn?.split('/').pop()}</h1>
-        <p className={styles.empty}>No containers found for this task.</p>
+        <div className={styles.content}>
+          <h1 className={styles.header}>Containers - {taskArn?.split('/').pop()}</h1>
+          <p className={styles.empty}>No containers found for this task.</p>
+        </div>
       </div>
     )
   }
@@ -105,89 +111,93 @@ function Containers(): React.JSX.Element {
   return (
     <div className={styles.container}>
       <Breadcrumbs items={breadcrumbItems} />
-      <h1 className={styles.header}>Containers - {taskArn?.split('/').pop()}</h1>
-      <p className={styles.description}>
-        Found {containers.length} container{containers.length !== 1 ? 's' : ''}
-      </p>
-      <table className={styles.table}>
-        <thead className={styles.tableHead}>
-          <tr>
-            <th>Name</th>
-            <th>Status</th>
-            <th>Health</th>
-            <th>Image</th>
-            <th>Runtime ID</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {containers.map((container) => (
-            <tr key={container.containerArn} className={styles.tableRow}>
-              <td className={styles.containerNameCell}>{container.name}</td>
-              <td>
-                <span
-                  className={
-                    container.lastStatus === 'RUNNING' ? styles.statusRunning : styles.statusStopped
-                  }
-                >
-                  {container.lastStatus}
-                </span>
-              </td>
-              <td>
-                <span
-                  className={
-                    container.healthStatus === 'HEALTHY'
-                      ? styles.healthHealthy
-                      : container.healthStatus === 'UNHEALTHY'
-                        ? styles.healthUnhealthy
-                        : styles.healthNA
-                  }
-                >
-                  {container.healthStatus || 'N/A'}
-                </span>
-              </td>
-              <td className={styles.imageCell} title={container.image}>
-                {container.image}
-              </td>
-              <td className={styles.runtimeId}>{container.runtimeId.substring(0, 12)}</td>
-              <td className={styles.actionCell}>
-                <button
-                  className={styles.actionButton}
-                  onClick={() => {
-                    navigate(
-                      `/clusters/${encodeURIComponent(clusterName || '')}/services/${encodeURIComponent(serviceName || '')}/tasks/${encodeURIComponent(taskArn || '')}/containers/${encodeURIComponent(container.name)}/details`
-                    )
-                  }}
-                >
-                  View Details
-                </button>
-                <button
-                  className={styles.actionButton}
-                  onClick={() => {
-                    navigate(
-                      `/clusters/${encodeURIComponent(clusterName || '')}/services/${encodeURIComponent(serviceName || '')}/tasks/${encodeURIComponent(taskArn || '')}/containers/${encodeURIComponent(container.name)}/logs`
-                    )
-                  }}
-                >
-                  View Logs
-                </button>
-                <button
-                  className={styles.actionButton}
-                  onClick={() => {
-                    const region = taskArn?.split(':')[3]
-                    const cluster = taskArn?.split(':')[5].split('/')[1]
-                    const taskId = taskArn?.split('/').pop()
-                    const url = `https://console.aws.amazon.com/ecs/v2/clusters/${cluster}/tasks/${taskId}?region=${region}`
-                    window.open(url, '_blank')
-                  }}
-                >
-                  Open in AWS
-                </button>
-              </td>
+      <div className={styles.content}>
+        <h1 className={styles.header}>Containers - {taskArn?.split('/').pop()}</h1>
+        <p className={styles.description}>
+          Found {containers.length} container{containers.length !== 1 ? 's' : ''}
+        </p>
+        <table className={styles.table}>
+          <thead className={styles.tableHead}>
+            <tr>
+              <th>Name</th>
+              <th>Status</th>
+              <th>Health</th>
+              <th>Image</th>
+              <th>Runtime ID</th>
+              <th>Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {containers.map((container) => (
+              <tr key={container.containerArn} className={styles.tableRow}>
+                <td className={styles.containerNameCell}>{container.name}</td>
+                <td>
+                  <span
+                    className={
+                      container.lastStatus === 'RUNNING'
+                        ? styles.statusRunning
+                        : styles.statusStopped
+                    }
+                  >
+                    {container.lastStatus}
+                  </span>
+                </td>
+                <td>
+                  <span
+                    className={
+                      container.healthStatus === 'HEALTHY'
+                        ? styles.healthHealthy
+                        : container.healthStatus === 'UNHEALTHY'
+                          ? styles.healthUnhealthy
+                          : styles.healthNA
+                    }
+                  >
+                    {container.healthStatus || 'N/A'}
+                  </span>
+                </td>
+                <td className={styles.imageCell} title={container.image}>
+                  {container.image}
+                </td>
+                <td className={styles.runtimeId}>{container.runtimeId.substring(0, 12)}</td>
+                <td className={styles.actionCell}>
+                  <button
+                    className={styles.actionButton}
+                    onClick={() => {
+                      navigate(
+                        `/clusters/${encodeURIComponent(clusterName || '')}/services/${encodeURIComponent(serviceName || '')}/tasks/${encodeURIComponent(taskArn || '')}/containers/${encodeURIComponent(container.name)}/details`
+                      )
+                    }}
+                  >
+                    View Details
+                  </button>
+                  <button
+                    className={styles.actionButton}
+                    onClick={() => {
+                      navigate(
+                        `/clusters/${encodeURIComponent(clusterName || '')}/services/${encodeURIComponent(serviceName || '')}/tasks/${encodeURIComponent(taskArn || '')}/containers/${encodeURIComponent(container.name)}/logs`
+                      )
+                    }}
+                  >
+                    View Logs
+                  </button>
+                  <button
+                    className={styles.actionButton}
+                    onClick={() => {
+                      const region = taskArn?.split(':')[3]
+                      const cluster = taskArn?.split(':')[5].split('/')[1]
+                      const taskId = taskArn?.split('/').pop()
+                      const url = `https://console.aws.amazon.com/ecs/v2/clusters/${cluster}/tasks/${taskId}?region=${region}`
+                      window.open(url, '_blank')
+                    }}
+                  >
+                    Open in AWS
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   )
 }
