@@ -109,111 +109,63 @@ function Containers(): React.JSX.Element {
       <p className={styles.description}>
         Found {containers.length} container{containers.length !== 1 ? 's' : ''}
       </p>
-      <div className={styles.containersList}>
-        {containers.map((container) => (
-          <div
-            key={container.containerArn}
-            className={styles.containerCard}
-            onClick={() => {
-              navigate(
-                `/clusters/${encodeURIComponent(clusterName || '')}/services/${encodeURIComponent(serviceName || '')}/tasks/${encodeURIComponent(taskArn || '')}/containers/${encodeURIComponent(container.name)}/logs`
-              )
-            }}
-          >
-            <h2 className={styles.containerName}>{container.name}</h2>
-            <div className={styles.infoGrid}>
-              <div className={styles.infoItem}>
-                <span className={styles.infoLabel}>Status:</span>
+      <table className={styles.table}>
+        <thead className={styles.tableHead}>
+          <tr>
+            <th>Name</th>
+            <th>Status</th>
+            <th>Health</th>
+            <th>Image</th>
+            <th>Runtime ID</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {containers.map((container) => (
+            <tr key={container.containerArn} className={styles.tableRow}>
+              <td className={styles.containerNameCell}>{container.name}</td>
+              <td>
                 <span
-                  className={`${styles.infoValue} ${container.lastStatus === 'RUNNING' ? styles.statusRunning : styles.statusStopped}`}
+                  className={
+                    container.lastStatus === 'RUNNING' ? styles.statusRunning : styles.statusStopped
+                  }
                 >
                   {container.lastStatus}
                 </span>
-              </div>
-              <div className={styles.infoItem}>
-                <span className={styles.infoLabel}>Health:</span>
+              </td>
+              <td>
                 <span
-                  className={`${styles.infoValue} ${container.healthStatus === 'HEALTHY' ? styles.healthHealthy : container.healthStatus === 'UNHEALTHY' ? styles.healthUnhealthy : ''}`}
+                  className={
+                    container.healthStatus === 'HEALTHY'
+                      ? styles.healthHealthy
+                      : container.healthStatus === 'UNHEALTHY'
+                        ? styles.healthUnhealthy
+                        : styles.healthNA
+                  }
                 >
                   {container.healthStatus || 'N/A'}
                 </span>
-              </div>
-              <div className={styles.infoItem}>
-                <span className={styles.infoLabel}>CPU:</span>
-                <span className={styles.infoValue}>{container.cpu}</span>
-              </div>
-              <div className={styles.infoItem}>
-                <span className={styles.infoLabel}>Memory:</span>
-                <span className={styles.infoValue}>{container.memory}</span>
-              </div>
-              <div className={styles.infoItem}>
-                <span className={styles.infoLabel}>Memory Reservation:</span>
-                <span className={styles.infoValue}>{container.memoryReservation}</span>
-              </div>
-              <div className={styles.infoItem}>
-                <span className={styles.infoLabel}>Runtime ID:</span>
-                <span className={`${styles.infoValue} ${styles.runtimeId}`}>
-                  {container.runtimeId.substring(0, 12)}
-                </span>
-              </div>
-            </div>
-
-            {container.exitCode !== undefined && (
-              <div className={styles.exitCodeSection}>
-                <span className={styles.infoLabel}>Exit Code:</span> {container.exitCode}
-                {container.reason && (
-                  <span className={styles.exitReason}>Reason: {container.reason}</span>
-                )}
-              </div>
-            )}
-
-            <div className={styles.imageSection}>
-              <div className={styles.infoLabel}>Image:</div>
-              <div className={styles.imagePath}>{container.image}</div>
-              {container.imageDigest && (
-                <div className={styles.imageDigest}>{container.imageDigest}</div>
-              )}
-            </div>
-
-            {container.networkInterfaces.length > 0 && (
-              <div className={styles.networkSection}>
-                <div className={styles.sectionTitle}>Network Interfaces:</div>
-                {container.networkInterfaces.map((iface, idx) => (
-                  <div key={idx} className={styles.networkInterface}>
-                    Private IP: {iface.privateIpv4Address}
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {container.networkBindings.length > 0 && (
-              <div className={styles.networkSection}>
-                <div className={styles.sectionTitle}>Network Bindings:</div>
-                <table className={styles.bindingsTable}>
-                  <thead>
-                    <tr>
-                      <th>Container Port</th>
-                      <th>Host Port</th>
-                      <th>Protocol</th>
-                      <th>Bind IP</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {container.networkBindings.map((binding, idx) => (
-                      <tr key={idx}>
-                        <td>{binding.containerPort}</td>
-                        <td>{binding.hostPort}</td>
-                        <td>{binding.protocol}</td>
-                        <td className="bindIP">{binding.bindIP}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
+              </td>
+              <td className={styles.imageCell} title={container.image}>
+                {container.image}
+              </td>
+              <td className={styles.runtimeId}>{container.runtimeId.substring(0, 12)}</td>
+              <td className={styles.actionCell}>
+                <button
+                  className={styles.actionButton}
+                  onClick={() => {
+                    navigate(
+                      `/clusters/${encodeURIComponent(clusterName || '')}/services/${encodeURIComponent(serviceName || '')}/tasks/${encodeURIComponent(taskArn || '')}/containers/${encodeURIComponent(container.name)}/logs`
+                    )
+                  }}
+                >
+                  View Logs
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   )
 }
