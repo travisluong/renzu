@@ -106,6 +106,16 @@ function Services(): React.JSX.Element {
                   className={styles.actionButton}
                   onClick={() =>
                     navigate(
+                      `/clusters/${encodeURIComponent(clusterName || '')}/services/${encodeURIComponent(service.name)}/details`
+                    )
+                  }
+                >
+                  View Details
+                </button>
+                <button
+                  className={styles.actionButton}
+                  onClick={() =>
+                    navigate(
                       `/clusters/${encodeURIComponent(clusterName || '')}/services/${encodeURIComponent(service.name)}/tasks`
                     )
                   }

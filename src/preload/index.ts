@@ -8,6 +8,8 @@ const api = {
     getClusterDetails: (clusterArn: string) =>
       ipcRenderer.invoke('ecs:getClusterDetails', clusterArn),
     listServices: (clusterArn: string) => ipcRenderer.invoke('ecs:listServices', clusterArn),
+    getServiceDetails: (clusterArn: string, serviceName: string) =>
+      ipcRenderer.invoke('ecs:getServiceDetails', clusterArn, serviceName),
     listTasks: (clusterArn: string, serviceName: string) =>
       ipcRenderer.invoke('ecs:listTasks', clusterArn, serviceName),
     getTaskContainers: (clusterArn: string, taskArn: string) =>

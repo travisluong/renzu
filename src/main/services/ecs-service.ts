@@ -219,6 +219,101 @@ export async function listServices(clusterArn: string): Promise<Service[]> {
   }
 }
 
+export async function getServiceDetails(clusterArn: string, serviceName: string): Promise<any> {
+  try {
+    const { configFile } = await loadSharedConfigFiles()
+    const defaultRegion = configFile?.default?.region || 'us-east-1'
+
+    const client = new ECSClient({
+      region: defaultRegion,
+      credentials: fromIni()
+    })
+
+    const command = new DescribeServicesCommand({
+      cluster: clusterArn,
+      services: [serviceName],
+      include: ['TAGS']
+    })
+    const response = await client.send(command)
+
+    if (!response.services || response.services.length === 0) {
+      throw new Error('Service not found')
+    }
+
+    const service = response.services[0]
+    return {
+      name: service.serviceName || 'Unknown',
+      arn: service.serviceArn || '',
+      status: service.status || 'UNKNOWN',
+      desiredCount: service.desiredCount || 0,
+      runningCount: service.runningCount || 0,
+      pendingCount: service.pendingCount || 0,
+      launchType: service.launchType || 'UNKNOWN',
+      taskDefinition: service.taskDefinition || '',
+      clusterArn: service.clusterArn || '',
+      roleArn: service.roleArn,
+      createdAt: service.createdAt?.toISOString(),
+      deploymentConfiguration: service.deploymentConfiguration
+        ? {
+            maximumPercent: service.deploymentConfiguration.maximumPercent || 0,
+            minimumHealthyPercent: service.deploymentConfiguration.minimumHealthyPercent || 0,
+            deploymentCircuitBreaker: service.deploymentConfiguration.deploymentCircuitBreaker
+              ? {
+                  enable: service.deploymentConfiguration.deploymentCircuitBreaker.enable || false,
+                  rollback:
+                    service.deploymentConfiguration.deploymentCircuitBreaker.rollback || false
+                }
+              : undefined
+          }
+        : undefined,
+      loadBalancers:
+        service.loadBalancers?.map((lb) => ({
+          targetGroupArn: lb.targetGroupArn,
+          containerName: lb.containerName,
+          containerPort: lb.containerPort
+        })) || [],
+      networkConfiguration: service.networkConfiguration
+        ? {
+            awsvpcConfiguration: service.networkConfiguration.awsvpcConfiguration
+              ? {
+                  subnets: service.networkConfiguration.awsvpcConfiguration.subnets || [],
+                  securityGroups:
+                    service.networkConfiguration.awsvpcConfiguration.securityGroups || [],
+                  assignPublicIp: service.networkConfiguration.awsvpcConfiguration.assignPublicIp
+                }
+              : undefined
+          }
+        : undefined,
+      placementStrategy:
+        service.placementStrategy?.map((strategy) => ({
+          type: strategy.type || '',
+          field: strategy.field
+        })) || [],
+      placementConstraints:
+        service.placementConstraints?.map((constraint) => ({
+          type: constraint.type || '',
+          expression: constraint.expression
+        })) || [],
+      capacityProviderStrategy:
+        service.capacityProviderStrategy?.map((strategy) => ({
+          capacityProvider: strategy.capacityProvider || '',
+          weight: strategy.weight || 0,
+          base: strategy.base || 0
+        })) || [],
+      tags: service.tags?.map((tag) => ({ key: tag.key || '', value: tag.value || '' })) || [],
+      events:
+        service.events?.slice(0, 10).map((event) => ({
+          id: event.id || '',
+          createdAt: event.createdAt?.toISOString() || '',
+          message: event.message || ''
+        })) || []
+    }
+  } catch (error) {
+    console.error('Error getting service details:', error)
+    throw error
+  }
+}
+
 export async function listTasks(clusterArn: string, serviceName: string): Promise<Task[]> {
   try {
     // Load AWS config to get default region
