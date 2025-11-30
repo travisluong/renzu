@@ -3,7 +3,7 @@
 body {
   display: flex;
   align-items: flex-start;
-  justify-content: center;
+  justify-content: flex-start;
   overflow-y: auto;
   background-color: #2a2a2a;
   user-select: none;
@@ -32,7 +32,6 @@ code {
   flex-direction: column;
   padding: 0;
   width: 100%;
-  max-width: 1200px;
 }
 
 .logo {
