@@ -77,7 +77,14 @@ function Clusters(): React.JSX.Element {
           <tbody>
             {clusters.map((cluster) => (
               <tr key={cluster.arn} className={styles.tableRow}>
-                <td className={styles.tableCellName}>{cluster.name}</td>
+                <td className={styles.tableCellName}>
+                  <button
+                    className={styles.nameLink}
+                    onClick={() => navigate(`/clusters/${encodeURIComponent(cluster.arn)}/details`)}
+                  >
+                    {cluster.name}
+                  </button>
+                </td>
                 <td className={styles.tableCell}>
                   <span
                     className={

@@ -87,7 +87,18 @@ function Services(): React.JSX.Element {
           <tbody>
             {services.map((service) => (
               <tr key={service.arn} className={styles.tableRow}>
-                <td className={styles.tableCellName}>{service.name}</td>
+                <td className={styles.tableCellName}>
+                  <button
+                    className={styles.nameLink}
+                    onClick={() =>
+                      navigate(
+                        `/clusters/${encodeURIComponent(clusterName || '')}/services/${encodeURIComponent(service.name)}/details`
+                      )
+                    }
+                  >
+                    {service.name}
+                  </button>
+                </td>
                 <td className={styles.tableCell}>
                   <span
                     className={

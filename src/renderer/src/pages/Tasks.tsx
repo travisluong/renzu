@@ -113,7 +113,18 @@ function Tasks(): React.JSX.Element {
           <tbody>
             {tasks.map((task) => (
               <tr key={task.taskArn} className={styles.tableRow}>
-                <td className={styles.taskId}>{task.taskArn.split('/').pop()}</td>
+                <td className={styles.taskId}>
+                  <button
+                    className={styles.nameLink}
+                    onClick={() =>
+                      navigate(
+                        `/clusters/${encodeURIComponent(clusterName || '')}/services/${encodeURIComponent(serviceName || '')}/tasks/${encodeURIComponent(task.taskArn)}/details`
+                      )
+                    }
+                  >
+                    {task.taskArn.split('/').pop()}
+                  </button>
+                </td>
                 <td>
                   <span className={getStatusClass(task.lastStatus)}>{task.lastStatus}</span>
                 </td>

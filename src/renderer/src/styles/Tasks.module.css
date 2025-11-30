@@ -75,6 +75,23 @@
   font-size: 13px;
 }
 
+.nameLink {
+  background: none;
+  border: none;
+  color: #667eea;
+  cursor: pointer;
+  font-family: monospace;
+  font-size: 13px;
+  padding: 0;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.nameLink:hover {
+  color: #5568d3;
+  text-decoration: underline;
+}
+
 .statusRunning {
   display: inline-block;
   padding: 4px 10px;

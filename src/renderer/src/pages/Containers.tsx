@@ -130,7 +130,18 @@ function Containers(): React.JSX.Element {
           <tbody>
             {containers.map((container) => (
               <tr key={container.containerArn} className={styles.tableRow}>
-                <td className={styles.containerNameCell}>{container.name}</td>
+                <td className={styles.containerNameCell}>
+                  <button
+                    className={styles.nameLink}
+                    onClick={() =>
+                      navigate(
+                        `/clusters/${encodeURIComponent(clusterName || '')}/services/${encodeURIComponent(serviceName || '')}/tasks/${encodeURIComponent(taskArn || '')}/containers/${encodeURIComponent(container.name)}/details`
+                      )
+                    }
+                  >
+                    {container.name}
+                  </button>
+                </td>
                 <td>
                   <span
                     className={
