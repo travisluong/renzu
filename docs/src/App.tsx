@@ -1,15 +1,55 @@
 import './App.css'
+import { useState, useEffect } from 'react'
+
+interface GithubRelease {
+  tag_name: string
+  assets: Array<{
+    name: string
+    browser_download_url: string
+  }>
+}
 
 function App() {
+  const [release, setRelease] = useState<GithubRelease | null>(null)
+
+  useEffect(() => {
+    fetch('https://api.github.com/repos/travisluong/renzu/releases/latest')
+      .then((res) => res.json())
+      .then((data) => setRelease(data))
+      .catch((err) => console.error('Failed to fetch release:', err))
+  }, [])
+
   const handleDownload = (platform: string): void => {
-    // These will link to GitHub releases once workflow is set up
-    const baseUrl = 'https://github.com/travisluong/renzu/releases/latest/download/'
-    const files: Record<string, string> = {
-      windows: `${baseUrl}Renzu-Setup.exe`,
-      mac: `${baseUrl}Renzu.dmg`,
-      linux: `${baseUrl}Renzu.AppImage`
+    if (!release) return
+
+    let downloadUrl = ''
+    const assets = release.assets
+
+    switch (platform) {
+      case 'windows':
+        downloadUrl = assets.find((a) => a.name.endsWith('.exe'))?.browser_download_url || ''
+        break
+      case 'mac':
+        downloadUrl = assets.find((a) => a.name.endsWith('.dmg'))?.browser_download_url || ''
+        break
+      case 'linux':
+        downloadUrl = assets.find((a) => a.name.endsWith('.AppImage'))?.browser_download_url || ''
+        break
     }
-    window.location.href = files[platform]
+
+    if (downloadUrl) {
+      window.location.href = downloadUrl
+    } else {
+      console.error(`No download found for ${platform}`)
+      // Fallback to generic link if API fails
+      const baseUrl = `https://github.com/travisluong/renzu/releases/latest/download/`
+      const files: Record<string, string> = {
+        windows: `${baseUrl}renzu-${release.tag_name.replace('v', '')}-setup.exe`,
+        mac: `${baseUrl}renzu-${release.tag_name.replace('v', '')}.dmg`,
+        linux: `${baseUrl}renzu-${release.tag_name.replace('v', '')}.AppImage`
+      }
+      window.location.href = files[platform]
+    }
   }
 
   return (
@@ -91,7 +131,9 @@ function App() {
           </section>
 
           <section className="download">
-            <h2 className="section-title">Download Latest Release</h2>
+            <h2 className="section-title">
+              Download Latest Release {release ? `(${release.tag_name})` : ''}
+            </h2>
             <div className="download-buttons">
               <button onClick={() => handleDownload('windows')} className="download-button">
                 <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor">
