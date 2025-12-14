@@ -73,6 +73,15 @@
   animation: fadeIn 0.8s ease-out;
 }
 
+.hero-logo {
+  width: 300px;
+  height: 300px;
+  margin: 0 auto 2rem;
+  display: block;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.15));
+}
+
 .hero-title {
   font-size: 4.5rem;
   font-weight: 800;

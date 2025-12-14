@@ -74,6 +74,7 @@ function App() {
       <main className="main">
         <div className="container">
           <section className="hero">
+            <img src="/renzu/renzu-logo.png" alt="Renzu Logo" className="hero-logo" />
             <h2 className="hero-title">AWS ECS Desktop Client</h2>
             <p className="hero-description">
               Renzu is a powerful desktop application for managing your AWS Elastic Container
