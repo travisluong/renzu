@@ -40,7 +40,7 @@ appImage:
 npmRebuild: false
 publish:
   provider: github
-  owner: travisluong
+  owner: YOUR_USERNAME
   repo: renzu
 electronDownload:
   mirror: https://npmmirror.com/mirrors/electron/
