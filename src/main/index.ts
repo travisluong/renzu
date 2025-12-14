@@ -62,6 +62,10 @@ app.whenReady().then(() => {
   // IPC test
   ipcMain.on('ping', () => console.log('pong'))
 
+  ipcMain.handle('app:getVersion', () => {
+    return app.getVersion()
+  })
+
   // ECS IPC handlers
   ipcMain.handle('ecs:listClusters', async () => {
     try {

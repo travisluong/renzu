@@ -108,6 +108,7 @@ declare global {
   interface Window {
     electron: ElectronAPI
     api: {
+      getAppVersion: () => Promise<string>
       ecs: ECSAPI
       logs: LogsAPI
     }

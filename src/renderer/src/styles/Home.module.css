@@ -30,6 +30,12 @@
   font-weight: 400;
 }
 
+.version {
+  font-size: 14px;
+  color: #666;
+  margin-top: 8px;
+}
+
 .buttonGroup {
   display: flex;
   flex-direction: column;
